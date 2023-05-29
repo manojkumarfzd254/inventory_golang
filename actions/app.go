@@ -88,6 +88,10 @@ func App() *buffalo.App {
 		user.GET("/", UserList)
 		user.GET("/create", UserCreate)
 		user.POST("/save", UserSave)
+		user.GET("/edit/{ID}", UserEdit)
+		user.GET("/show/{ID}", UserShow)
+		user.PUT("/update/{ID}", UserUpdate)
+		user.DELETE("/delete/{ID}", UserDelete)
 
 		//Routes for User registration
 		users := app.Group("/users")

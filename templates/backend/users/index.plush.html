@@ -1,6 +1,6 @@
 <div class="box box-success">
   <div class="box-header">
-    <h3 class="d-inline-block">Users</h3>
+    <h3 class="d-inline-block">User Management</h3>
     <div class="float-end">
       <%= linkTo(authUsersCreatePath(), {class: "btn btn-success"}) { %> Create
       New User <% } %>
@@ -23,7 +23,11 @@
           <td><%= user.Mobile%></td>
           <td><%= user.Address%></td>
           <td>
-            <div class="float-end"></div>
+            <div class="float-end">
+              <%= linkTo(authUsersShowIDPath({ ID: user.ID }), {class: "btn btn-info", body: "View"}) %>
+              <%= linkTo(editAuthUsersIDPath({ ID: user.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+              <%= linkTo(authUsersDeleteIDPath({ ID: user.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+            </div>
           </td>
         </tr>
         <% } %>

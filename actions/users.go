@@ -36,6 +36,96 @@ func UserCreate(c buffalo.Context) error {
 	return c.Redirect(http.StatusFound, "/")
 }
 
+func UserEdit(c buffalo.Context) error {
+	// Get the DB connection from the context
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+
+	// Allocate an empty Book
+	user := &models.User{}
+
+	if err := tx.Find(user, c.Param("ID")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	c.Set("user", user)
+	return c.Render(http.StatusOK, r2.HTML("backend/users/edit.plush.html"))
+}
+
+func UserShow(c buffalo.Context) error {
+	// Get the DB connection from the context
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+
+	// Allocate an empty Book
+	user := &models.User{}
+
+	if err := tx.Find(user, c.Param("ID")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	c.Set("user", user)
+	return c.Render(http.StatusOK, r2.HTML("backend/users/show.plush.html"))
+}
+
+func UserUpdate(c buffalo.Context) error {
+	// Get the DB connection from the context
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+
+	// Allocate an empty Book
+	user := &models.User{}
+
+	if err := tx.Find(user, c.Param("ID")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	// Bind Book to the html form elements
+	if err := c.Bind(user); err != nil {
+		return errors.WithStack(err)
+	}
+
+	verrs, err := tx.ValidateAndUpdate(user)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if verrs.HasAny() {
+		return responder.Wants("html", func(c buffalo.Context) error {
+			// Make the errors available inside the html template
+			c.Set("errors", verrs)
+
+			// Render again the edit.html template that the user can
+			// correct the input.
+			c.Set("user", user)
+
+			return c.Render(http.StatusUnprocessableEntity, r2.HTML("backend/users/edit.plush.html"))
+		}).Wants("json", func(c buffalo.Context) error {
+			return c.Render(http.StatusUnprocessableEntity, r2.JSON(verrs))
+		}).Wants("xml", func(c buffalo.Context) error {
+			return c.Render(http.StatusUnprocessableEntity, r2.XML(verrs))
+		}).Respond(c)
+	}
+
+	return responder.Wants("html", func(c buffalo.Context) error {
+		// If there are no errors set a success message
+		c.Flash().Add("success", T.Translate(c, "User successfully updated."))
+
+		// and redirect to the show page
+		return c.Redirect(http.StatusSeeOther, "/auth/users/")
+	}).Wants("json", func(c buffalo.Context) error {
+		return c.Render(http.StatusOK, r.JSON(user))
+	}).Wants("xml", func(c buffalo.Context) error {
+		return c.Render(http.StatusOK, r.XML(user))
+	}).Respond(c)
+}
+
 func UserList(c buffalo.Context) error {
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
@@ -105,6 +195,39 @@ func UserSave(c buffalo.Context) error {
 	}).Respond(c)
 
 }
+func UserDelete(c buffalo.Context) error {
+	// Get the DB connection from the context
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+
+	// Allocate an empty Book
+	user := &models.User{}
+
+	// To find the Book the parameter book_id is used.
+	if err := tx.Find(user, c.Param("ID")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	if err := tx.Destroy(user); err != nil {
+		return err
+	}
+
+	return responder.Wants("html", func(c buffalo.Context) error {
+		// If there are no errors set a flash message
+		c.Flash().Add("success", T.Translate(c, "User successfully deleted."))
+
+		// Redirect to the index page
+		return c.Redirect(http.StatusSeeOther, "/auth/users/")
+	}).Wants("json", func(c buffalo.Context) error {
+		return c.Render(http.StatusOK, r.JSON(user))
+	}).Wants("xml", func(c buffalo.Context) error {
+		return c.Render(http.StatusOK, r.XML(user))
+	}).Respond(c)
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
 
 // UsersNew renders the users form
 func UsersNew(c buffalo.Context) error {
