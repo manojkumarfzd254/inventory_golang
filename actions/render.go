@@ -8,6 +8,7 @@ import (
 )
 
 var r *render.Engine
+var r2 *render.Engine
 
 func init() {
 	r = render.New(render.Options{
@@ -27,5 +28,18 @@ func init() {
 			// forms.FormKey:     forms.Form,
 			// forms.FormForKey:  forms.FormFor,
 		},
+	})
+
+	r2 = render.New(render.Options{
+		HTMLLayout: "backend/application.plush.html",
+
+		// fs.FS containing templates
+		TemplatesFS: templates.FS(),
+
+		// fs.FS containing assets
+		AssetsFS: public.FS(),
+
+		// Add template helpers here:
+		Helpers: render.Helpers{},
 	})
 }

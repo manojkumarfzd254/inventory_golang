@@ -1,9 +1,12 @@
-create_table("users") {
+create_table("users"){
+    create_table("users") {
 	t.Column("id", "uuid", {primary: true})
 	t.Column("email", "string", {})
 	t.Column("name", "string", {"size": 50})
 	t.Column("mobile", "string", {"size": 14})
 	t.Column("address", "string", {})
 	t.Column("password", "string", {})
+	t.Column("password_hash", "string", {})
 	t.Timestamps()
+}
 }

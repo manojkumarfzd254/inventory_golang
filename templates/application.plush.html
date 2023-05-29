@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <title>Buffalo - Library</title>
     <%= stylesheetTag("application.css") %>
+    <!-- <%= stylesheetTag("bootstrap.min.css") %> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <%= stylesheetTag("custom.css") %>
     <meta name="csrf-param" content="authenticity_token" />
     <meta name="csrf-token" content="<%= authenticity_token %>" />
@@ -12,12 +14,13 @@
   </head>
   <body>
 
-    <div class="container">
+    <div class="">
       <%= partial("flash.html") %>
       <%= yield %>
     </div>
 
     <%= javascriptTag("application.js") %>
+    <%= javascriptTag("bootstrap.min.js") %>
     <%= javascriptTag("custom.js") %>
   </body>
 </html>

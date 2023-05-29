@@ -1,0 +1,36 @@
+<div class="box box-success">
+  <div class="box-header">
+    <h3 class="d-inline-block">Users</h3>
+    <div class="float-end">
+      <%= linkTo(authUsersCreatePath(), {class: "btn btn-success"}) { %> Create
+      New User <% } %>
+    </div>
+  </div>
+  <div class="box-body">
+    <table class="table table-hover table-bordered">
+      <thead class="thead-light">
+        <th>Name</th>
+        <th>Email</th>
+        <th>Mobile</th>
+        <th>Address</th>
+        <th>Action</th>
+      </thead>
+      <tbody>
+        <%= for (user) in users { %>
+        <tr>
+          <td><%= user.Name%></td>
+          <td><%= user.Email%></td>
+          <td><%= user.Mobile%></td>
+          <td><%= user.Address%></td>
+          <td>
+            <div class="float-end"></div>
+          </td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+  <div class="footer">
+    <div class="text-center"><%= paginator(pagination) %></div>
+  </div>
+</div>

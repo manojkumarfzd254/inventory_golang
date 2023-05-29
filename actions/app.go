@@ -65,8 +65,35 @@ func App() *buffalo.App {
 		// Setup and use translations:
 		app.Use(translations())
 
-		app.GET("/", HomeHandler)
-		app.Resource("/users", UsersResource{})
+		app.GET("/", AuthLanding)
+		// app.Resource("/users", UsersResource{})
+
+		// NOTE: this block should go before any resources
+		// that need to be protected by buffalo-goth!
+		//AuthMiddlewares
+		app.Use(SetCurrentUser)
+		app.Use(Authorize)
+
+		//Routes for Auth
+		auth := app.Group("/auth")
+		auth.GET("/", AuthLanding)
+		auth.GET("/new", AuthNew)
+		auth.POST("/", AuthCreate)
+		auth.DELETE("/", AuthDestroy)
+
+		auth.Middleware.Skip(Authorize, AuthLanding, AuthNew, AuthCreate)
+
+		// user management routes
+		user := auth.Group("/users")
+		user.GET("/", UserList)
+		user.GET("/create", UserCreate)
+		user.POST("/save", UserSave)
+
+		//Routes for User registration
+		users := app.Group("/users")
+		users.GET("/new", UsersNew)
+		users.POST("/", UsersCreate)
+		users.Middleware.Remove(Authorize)
 
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})

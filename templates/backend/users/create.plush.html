@@ -1,0 +1,10 @@
+
+  <div class="box box-success">
+    <div class="box-header">Create a user</div>
+    <div class="box-body">
+        <%= formFor(user, {action: authUsersSavePath({ user_id: user.ID }), method: "POST"}) { %>
+            <%= partial("backend/users/form.html") %>
+          <% } %>
+    </div>
+  </div>
+  

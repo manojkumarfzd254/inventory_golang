@@ -9,47 +9,42 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-// User is used by pop to map your users database table to your go code.
-type User struct {
+// Book is used by pop to map your books database table to your go code.
+type Book struct {
 	ID        uuid.UUID `json:"id" db:"id"`
-	Name string `json:"name" db:"name"`
-	Email string `json:"email" db:"email"`
-	Mobile string `json:"mobile" db:"mobile"`
-	Address string `json:"address" db:"address"`
-	Password string `json:"password" db:"password"`
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
 
 // String is not required by pop and may be deleted
-func (u User) String() string {
-	ju, _ := json.Marshal(u)
-	return string(ju)
+func (b Book) String() string {
+	jb, _ := json.Marshal(b)
+	return string(jb)
 }
 
-// Users is not required by pop and may be deleted
-type Users []User
+// Books is not required by pop and may be deleted
+type Books []Book
 
 // String is not required by pop and may be deleted
-func (u Users) String() string {
-	ju, _ := json.Marshal(u)
-	return string(ju)
+func (b Books) String() string {
+	jb, _ := json.Marshal(b)
+	return string(jb)
 }
 
 // Validate gets run every time you call a "pop.Validate*" (pop.ValidateAndSave, pop.ValidateAndCreate, pop.ValidateAndUpdate) method.
 // This method is not required and may be deleted.
-func (u *User) Validate(tx *pop.Connection) (*validate.Errors, error) {
+func (b *Book) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }
 
 // ValidateCreate gets run every time you call "pop.ValidateAndCreate" method.
 // This method is not required and may be deleted.
-func (u *User) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
+func (b *Book) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }
 
 // ValidateUpdate gets run every time you call "pop.ValidateAndUpdate" method.
 // This method is not required and may be deleted.
-func (u *User) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
+func (b *Book) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }

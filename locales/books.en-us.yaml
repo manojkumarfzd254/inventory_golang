@@ -1,0 +1,6 @@
+- id: "book.created.success"
+  translation: "Book was successfully created."
+- id: "book.updated.success"
+  translation: "Book was successfully updated."
+- id: "book.destroyed.success"
+  translation: "Book was successfully destroyed."

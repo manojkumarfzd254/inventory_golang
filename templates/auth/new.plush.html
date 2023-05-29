@@ -1,0 +1,13 @@
+
+<div class="col-md-6 offset-md-3" style="margin-top: 100px;">
+  <div class="box box-primary">
+    <div class="box-header">Login</div>
+    <div class="box-body">
+      <%= formFor(user, {action: authPath(), method: "POST"}) { %>
+        <%= f.InputTag("Email") %>
+        <%= f.InputTag("Password", {type: "password"}) %>
+        <button class="btn btn-success">Sign In!</button>
+      <% } %>
+    </div>
+  </div>
+</div>
