@@ -18,9 +18,11 @@
         <div class="form-group col-md-6">
             <%= f.InputTag("Password", {type: "password"}) %>
         </div>
-        <div class="form-group col-md-6">
-            <%= f.InputTag("PasswordConfirmation", {type: "password"}) %>
-        </div>
+        <%= if (!checkID) { %>
+            <div class="form-group col-md-6">
+                <%= f.InputTag("PasswordConfirmation", {type: "password"}) %>
+            </div>
+        <% } %>
     </div>
     <div class="form-group col-md-12">
         <button class="btn btn-success" role="submit">Save</button>

@@ -51,6 +51,7 @@ func UserEdit(c buffalo.Context) error {
 	}
 
 	c.Set("user", user)
+	c.Set("checkID", c.Param("ID"))
 	return c.Render(http.StatusOK, r2.HTML("backend/users/edit.plush.html"))
 }
 
@@ -81,17 +82,16 @@ func UserUpdate(c buffalo.Context) error {
 
 	// Allocate an empty Book
 	user := &models.User{}
+	if err := c.Bind(user); err != nil {
+		return errors.WithStack(err)
+	}
 
 	if err := tx.Find(user, c.Param("ID")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 
-	// Bind Book to the html form elements
-	if err := c.Bind(user); err != nil {
-		return errors.WithStack(err)
-	}
-
-	verrs, err := tx.ValidateAndUpdate(user)
+	// Bind User to the html form elements
+	verrs, err := user.Update(tx)
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -115,7 +115,7 @@ func UserUpdate(c buffalo.Context) error {
 
 	return responder.Wants("html", func(c buffalo.Context) error {
 		// If there are no errors set a success message
-		c.Flash().Add("success", T.Translate(c, "User successfully updated."))
+		c.Flash().Add("success", "User successfully Updated.")
 
 		// and redirect to the show page
 		return c.Redirect(http.StatusSeeOther, "/auth/users/")

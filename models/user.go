@@ -39,6 +39,16 @@ func (u *User) Create(tx *pop.Connection) (*validate.Errors, error) {
 	return tx.ValidateAndCreate(u)
 }
 
+func (u *User) Update(tx *pop.Connection) (*validate.Errors, error) {
+	// u.Email = strings.ToLower(u.Email)
+	ph, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return validate.NewErrors(), errors.WithStack(err)
+	}
+	u.PasswordHash = string(ph)
+	return tx.ValidateAndUpdate(u)
+}
+
 // String is not required by pop and may be deleted
 func (u User) String() string {
 	ju, _ := json.Marshal(u)
