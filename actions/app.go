@@ -98,6 +98,8 @@ func App() *buffalo.App {
 		users.GET("/new", UsersNew)
 		users.POST("/", UsersCreate)
 		users.Middleware.Remove(Authorize)
+		// app.Use(FileServerMiddleware)
+		app.GET("/uploads/{path:.+}", FileServerMiddleware)
 
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})

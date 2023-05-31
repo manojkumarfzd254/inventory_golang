@@ -2,9 +2,13 @@ package models
 
 import (
 	"encoding/json"
+	"io"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/gobuffalo/buffalo/binding"
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
 	"github.com/gobuffalo/validate/v3/validators"
@@ -15,16 +19,18 @@ import (
 
 // User is a generated model from buffalo-auth, it serves as the base for username/password authentication.
 type User struct {
-	ID                   uuid.UUID `json:"id" db:"id"`
-	CreatedAt            time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt            time.Time `json:"updated_at" db:"updated_at"`
-	Email                string    `json:"email" db:"email"`
-	PasswordHash         string    `json:"password_hash" db:"password_hash"`
-	Name                 string    `json:"name" db:"name"`
-	Mobile               string    `json:"mobile" db:"mobile"`
-	Address              string    `json:"address" db:"address"`
-	Password             string    `json:"-" db:"-"`
-	PasswordConfirmation string    `json:"-" db:"-"`
+	ID                   uuid.UUID    `json:"id" db:"id"`
+	CreatedAt            time.Time    `json:"created_at" db:"created_at"`
+	UpdatedAt            time.Time    `json:"updated_at" db:"updated_at"`
+	Email                string       `json:"email" db:"email"`
+	PasswordHash         string       `json:"password_hash" db:"password_hash"`
+	Name                 string       `json:"name" db:"name"`
+	Mobile               string       `json:"mobile" db:"mobile"`
+	Address              string       `json:"address" db:"address"`
+	Password             string       `json:"-" db:"-"`
+	PasswordConfirmation string       `json:"-" db:"-"`
+	Profile              binding.File `db:"-" form:"profile"`
+	ProfilePath          string       `json:"profile_path" db:"profile_path"`
 }
 
 // Create wraps up the pattern of encrypting the password and
@@ -40,7 +46,26 @@ func (u *User) Create(tx *pop.Connection) (*validate.Errors, error) {
 }
 
 func (u *User) Update(tx *pop.Connection) (*validate.Errors, error) {
-	// u.Email = strings.ToLower(u.Email)
+	// if !u.Profile.Valid() {
+
+	// }
+
+	dir := filepath.Join(".", "uploads")
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return validate.NewErrors(), errors.WithStack(err)
+	}
+
+	f, err := os.Create(filepath.Join(dir, u.Profile.Filename))
+	if err != nil {
+		return validate.NewErrors(), errors.WithStack(err)
+	}
+	defer f.Close()
+	_, err = io.Copy(f, u.Profile)
+	if err != nil {
+		return validate.NewErrors(), errors.WithStack(err)
+	}
+	u.ProfilePath = "/" + filepath.Join(dir, u.Profile.Filename)
+
 	ph, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return validate.NewErrors(), errors.WithStack(err)

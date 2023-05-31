@@ -8,7 +8,6 @@ require (
 	github.com/gobuffalo/envy v1.10.2
 	github.com/gobuffalo/grift v1.5.2
 	github.com/gobuffalo/middleware v1.0.0
-	github.com/gobuffalo/pop v4.13.1+incompatible
 	github.com/gobuffalo/pop/v6 v6.1.1
 	github.com/gobuffalo/suite/v4 v4.0.4
 	github.com/gobuffalo/validate/v3 v3.3.3

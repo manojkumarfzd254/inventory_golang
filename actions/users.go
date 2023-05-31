@@ -138,7 +138,6 @@ func UserList(c buffalo.Context) error {
 	if err := q.All(&Users); err != nil {
 		return err
 	}
-
 	return responder.Wants("html", func(c buffalo.Context) error {
 		// Add the paginator to the context so it can be used in the template.
 		c.Set("pagination", q.Paginator)
