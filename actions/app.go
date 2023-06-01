@@ -93,6 +93,9 @@ func App() *buffalo.App {
 		user.PUT("/update/{ID}", UserUpdate)
 		user.DELETE("/delete/{ID}", UserDelete)
 
+		// book resource route
+		auth.Resource("/books", BooksResource{})
+
 		//Routes for User registration
 		users := app.Group("/users")
 		users.GET("/new", UsersNew)

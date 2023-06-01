@@ -1,4 +1,10 @@
 create_table("books") {
 	t.Column("id", "uuid", {primary: true})
+	t.Column("title", "string", {"size": 150})
+	t.Column("book_no", "string", {"size":50})
+	t.Column("author", "string", {"size":50})
+	t.Column("picture_path", "string", {})
+	t.Column("price", "float", {"size":50})
+	t.Column("status","integer", {})
 	t.Timestamps()
 }

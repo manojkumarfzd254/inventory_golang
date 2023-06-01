@@ -1,0 +1,47 @@
+<div class="box box-success">
+  <div class="box-header">
+    Books Management
+    <div class="float-end">
+      <%= linkTo(newAuthBooksPath(), {class: "btn btn-primary"}) { %> Create New
+      Book <% } %>
+    </div>
+  </div>
+  <div class="box-body">
+    <table class="table table-hover table-bordered">
+      <thead class="thead-light">
+        <th>Picture</th>
+        <th>Title</th>
+        <th>Book No</th>
+        <th>Author</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Action</th>
+      </thead>
+      <tbody>
+        <%= for (book) in books { %>
+        <tr>
+          <td><%= book.PicturePath%></td>
+          <td><%= book.Title%></td>
+          <td><%= book.BookNo%></td>
+          <td><%= book.Author%></td>
+          <td><%= book.Price%></td>
+          <td><%= book.Status%></td>
+          <td>
+            <div class="float-end">
+              <%= linkTo(bookAuthPath({ book_id: book.ID }), {class: "btn
+              btn-info", body: "View"}) %> <%= linkTo(editAuthBookPath({
+              book_id: book.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+              <%= linkTo(bookAuthPath({ book_id: book.ID }), {class: "btn
+              btn-danger", "data-method": "DELETE", "data-confirm": "Are you
+              sure?", body: "Destroy"}) %>
+            </div>
+          </td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+  <div class="box-footer">
+    <div class="text-center"><%= paginator(pagination) %></div>
+  </div>
+</div>

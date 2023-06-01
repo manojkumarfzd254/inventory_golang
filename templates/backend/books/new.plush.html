@@ -1,0 +1,7 @@
+<div class="box box-primary">
+  <div class="box-header">Create a book</div>
+  <div class="box-body">
+    <%= formFor(book, {action: newAuthBooksPath(), method: "POST"}) { %> <%=
+    partial("backend/books/form.html") %> <% } %>
+  </div>
+</div>

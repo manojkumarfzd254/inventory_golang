@@ -1,0 +1,28 @@
+<div class="form-group col-md-4">
+  <%= f.InputTag("Title", {class: "form-control", placeholder: "Enter Title"})
+  %>
+</div>
+<div class="form-group col-md-4">
+  <%= f.InputTag("BookNo", {class: "form-control", placeholder: "Enter Book
+  No."}) %>
+</div>
+
+<div class="form-group col-md-4">
+  <%= f.InputTag("Author", {class: "form-control", placeholder: "Enter Author"})
+  %>
+</div>
+<div class="form-group col-md-4">
+  <%= f.FileTag("Picture", {class:"form-control"}) %>
+</div>
+<div class="form-group col-md-4">
+  <%= f.InputTag("Price", {class: "form-control", placeholder: "Enter Price"})
+  %>
+</div>
+<div class="form-group col-md-4">
+<%= f.SelectTag("Status", {options: {"Enable": 1, "Disable": 0}}) %>
+</div>
+<div class="form-group col-md-12">
+  <button class="btn btn-success" role="submit">Save</button>
+  <%= linkTo(authBooksPath(), {class:
+    "btn btn-warning", "data-confirm": "Are you sure?", body: "Cancel"}) %>
+</div>

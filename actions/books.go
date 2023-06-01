@@ -53,11 +53,11 @@ func (v BooksResource) List(c buffalo.Context) error {
 		c.Set("pagination", q.Paginator)
 
 		c.Set("books", books)
-		return c.Render(http.StatusOK, r.HTML("books/index.plush.html"))
+		return c.Render(http.StatusOK, r2.HTML("backend/books/index.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
-		return c.Render(200, r.JSON(books))
+		return c.Render(200, r2.JSON(books))
 	}).Wants("xml", func(c buffalo.Context) error {
-		return c.Render(200, r.XML(books))
+		return c.Render(200, r2.XML(books))
 	}).Respond(c)
 }
 
@@ -81,11 +81,11 @@ func (v BooksResource) Show(c buffalo.Context) error {
 	return responder.Wants("html", func(c buffalo.Context) error {
 		c.Set("book", book)
 
-		return c.Render(http.StatusOK, r.HTML("books/show.plush.html"))
+		return c.Render(http.StatusOK, r2.HTML("backend/books/show.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
-		return c.Render(200, r.JSON(book))
+		return c.Render(200, r2.JSON(book))
 	}).Wants("xml", func(c buffalo.Context) error {
-		return c.Render(200, r.XML(book))
+		return c.Render(200, r2.XML(book))
 	}).Respond(c)
 }
 
@@ -93,8 +93,13 @@ func (v BooksResource) Show(c buffalo.Context) error {
 // This function is mapped to the path GET /books/new
 func (v BooksResource) New(c buffalo.Context) error {
 	c.Set("book", &models.Book{})
-
-	return c.Render(http.StatusOK, r.HTML("books/new.plush.html"))
+	options := map[string]string{
+		"Beginner":     "Beginner",
+		"Intermediate": "Intermediate",
+		"Advanced":     "Advanced",
+	}
+	c.Set("statusOptions", options)
+	return c.Render(http.StatusOK, r2.HTML("backend/books/new.plush.html"))
 }
 
 // Create adds a Book to the DB. This function is mapped to the
@@ -129,11 +134,11 @@ func (v BooksResource) Create(c buffalo.Context) error {
 			// correct the input.
 			c.Set("book", book)
 
-			return c.Render(http.StatusUnprocessableEntity, r.HTML("books/new.plush.html"))
+			return c.Render(http.StatusUnprocessableEntity, r2.HTML("backend/books/new.plush.html"))
 		}).Wants("json", func(c buffalo.Context) error {
-			return c.Render(http.StatusUnprocessableEntity, r.JSON(verrs))
+			return c.Render(http.StatusUnprocessableEntity, r2.JSON(verrs))
 		}).Wants("xml", func(c buffalo.Context) error {
-			return c.Render(http.StatusUnprocessableEntity, r.XML(verrs))
+			return c.Render(http.StatusUnprocessableEntity, r2.XML(verrs))
 		}).Respond(c)
 	}
 
@@ -144,9 +149,9 @@ func (v BooksResource) Create(c buffalo.Context) error {
 		// and redirect to the show page
 		return c.Redirect(http.StatusSeeOther, "/books/%v", book.ID)
 	}).Wants("json", func(c buffalo.Context) error {
-		return c.Render(http.StatusCreated, r.JSON(book))
+		return c.Render(http.StatusCreated, r2.JSON(book))
 	}).Wants("xml", func(c buffalo.Context) error {
-		return c.Render(http.StatusCreated, r.XML(book))
+		return c.Render(http.StatusCreated, r2.XML(book))
 	}).Respond(c)
 }
 
@@ -167,7 +172,7 @@ func (v BooksResource) Edit(c buffalo.Context) error {
 	}
 
 	c.Set("book", book)
-	return c.Render(http.StatusOK, r.HTML("books/edit.plush.html"))
+	return c.Render(http.StatusOK, r2.HTML("backend/books/edit.plush.html"))
 }
 
 // Update changes a Book in the DB. This function is mapped to
@@ -205,11 +210,11 @@ func (v BooksResource) Update(c buffalo.Context) error {
 			// correct the input.
 			c.Set("book", book)
 
-			return c.Render(http.StatusUnprocessableEntity, r.HTML("books/edit.plush.html"))
+			return c.Render(http.StatusUnprocessableEntity, r2.HTML("backend/books/edit.plush.html"))
 		}).Wants("json", func(c buffalo.Context) error {
-			return c.Render(http.StatusUnprocessableEntity, r.JSON(verrs))
+			return c.Render(http.StatusUnprocessableEntity, r2.JSON(verrs))
 		}).Wants("xml", func(c buffalo.Context) error {
-			return c.Render(http.StatusUnprocessableEntity, r.XML(verrs))
+			return c.Render(http.StatusUnprocessableEntity, r2.XML(verrs))
 		}).Respond(c)
 	}
 
@@ -220,9 +225,9 @@ func (v BooksResource) Update(c buffalo.Context) error {
 		// and redirect to the show page
 		return c.Redirect(http.StatusSeeOther, "/books/%v", book.ID)
 	}).Wants("json", func(c buffalo.Context) error {
-		return c.Render(http.StatusOK, r.JSON(book))
+		return c.Render(http.StatusOK, r2.JSON(book))
 	}).Wants("xml", func(c buffalo.Context) error {
-		return c.Render(http.StatusOK, r.XML(book))
+		return c.Render(http.StatusOK, r2.XML(book))
 	}).Respond(c)
 }
 
@@ -254,8 +259,8 @@ func (v BooksResource) Destroy(c buffalo.Context) error {
 		// Redirect to the index page
 		return c.Redirect(http.StatusSeeOther, "/books")
 	}).Wants("json", func(c buffalo.Context) error {
-		return c.Render(http.StatusOK, r.JSON(book))
+		return c.Render(http.StatusOK, r2.JSON(book))
 	}).Wants("xml", func(c buffalo.Context) error {
-		return c.Render(http.StatusOK, r.XML(book))
+		return c.Render(http.StatusOK, r2.XML(book))
 	}).Respond(c)
 }

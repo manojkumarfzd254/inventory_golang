@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/gobuffalo/buffalo/binding"
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
 	"github.com/gofrs/uuid"
@@ -11,9 +12,16 @@ import (
 
 // Book is used by pop to map your books database table to your go code.
 type Book struct {
-	ID        uuid.UUID `json:"id" db:"id"`
-	CreatedAt time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
+	ID          uuid.UUID    `json:"id" db:"id"`
+	Title       string       `json:"title" db:"title"`
+	BookNo      string       `json:"book_no" db:"book_no"`
+	Author      string       `json:"author" db:"author"`
+	Picture     binding.File `db:"-" form:"picture"`
+	PicturePath string       `json:"picture_path" db:"picture_path"`
+	Price       float64      `json:"price" db:"price"`
+	Status      int          `json:"status" db:"status"`
+	CreatedAt   time.Time    `json:"created_at" db:"created_at"`
+	UpdatedAt   time.Time    `json:"updated_at" db:"updated_at"`
 }
 
 // String is not required by pop and may be deleted
