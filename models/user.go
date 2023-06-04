@@ -49,23 +49,23 @@ func (u *User) Update(tx *pop.Connection) (*validate.Errors, error) {
 	// if !u.Profile.Valid() {
 
 	// }
+	if u.Profile.Valid() {
+		dir := filepath.Join(".", "uploads")
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return validate.NewErrors(), errors.WithStack(err)
+		}
 
-	dir := filepath.Join(".", "uploads")
-	if err := os.MkdirAll(dir, 0755); err != nil {
-		return validate.NewErrors(), errors.WithStack(err)
+		f, err := os.Create(filepath.Join(dir, u.Profile.Filename))
+		if err != nil {
+			return validate.NewErrors(), errors.WithStack(err)
+		}
+		defer f.Close()
+		_, err = io.Copy(f, u.Profile)
+		if err != nil {
+			return validate.NewErrors(), errors.WithStack(err)
+		}
+		u.ProfilePath = "/" + filepath.Join(dir, u.Profile.Filename)
 	}
-
-	f, err := os.Create(filepath.Join(dir, u.Profile.Filename))
-	if err != nil {
-		return validate.NewErrors(), errors.WithStack(err)
-	}
-	defer f.Close()
-	_, err = io.Copy(f, u.Profile)
-	if err != nil {
-		return validate.NewErrors(), errors.WithStack(err)
-	}
-	u.ProfilePath = "/" + filepath.Join(dir, u.Profile.Filename)
-
 	ph, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return validate.NewErrors(), errors.WithStack(err)
