@@ -1,3 +1,4 @@
+
 <div class="box box-success">
   <div class="box-header">Edit Book</div>
   <div class="box-body">
@@ -35,25 +36,6 @@
         },
         cache: true,
       },
-      initSelection: function(element, callback) {
-      // Get the selected category ID
-      var selectedCategoryId = $(element).val();
-      
-      // Make an AJAX request to get the selected category
-      $.ajax({
-        url: '<%=authCategoryPath({category_id:book.Category.ID})%>', // Replace with your AJAX endpoint
-        dataType: "json",
-        success:function(category) {
-          var selectedOption = {
-            id: category.ID,
-            text: category.CategoryName
-          };
-        
-        // Invoke the callback to set the selected option
-        callback(selectedOption);
-        }
-      });
-    }
     });
   });
 </script>

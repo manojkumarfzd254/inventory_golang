@@ -3,7 +3,7 @@
   %>
 </div>
 <div class="form-group col-md-4">
-<%= f.SelectTag("CategoryID", {class:"form-control categories-select2",data: { selected: "9ed0af3f-5e59-4d77-95e7-689dbacbf8c4" }}) %>
+<%= f.SelectTag("CategoryID", {class:"form-control categories-select2",options: categories, value: book.CategoryID,"allow_blank":true}) %>
 </div>
 <div class="form-group col-md-4">
   <%= f.InputTag("BookNo", {class: "form-control", placeholder: "Enter Book

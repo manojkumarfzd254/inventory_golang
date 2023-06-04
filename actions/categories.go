@@ -55,12 +55,16 @@ func (v CategoriesResource) List(c buffalo.Context) error {
 		c.Set("categories", categories)
 		return c.Render(http.StatusOK, r2.HTML("backend/categories/index.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
-		// for _, category := range jsonCategories {
-		// 	// Access category properties and perform operations
-		// 	fmt.Println(category.ID)
-		// 	fmt.Println(category.category_name)
-		// 	// ...
-		// }
+		if c.Param("q") != "" {
+			if err := tx.Where("category_name LIKE ?", "%"+c.Param("q")+"%").PaginateFromParams(c.Params()).All(categories); err != nil {
+				return err
+			}
+		} else {
+			if err := q.All(categories); err != nil {
+				return err
+			}
+		}
+
 		return c.Render(200, r2.JSON(categories))
 	}).Wants("xml", func(c buffalo.Context) error {
 		return c.Render(200, r2.XML(categories))

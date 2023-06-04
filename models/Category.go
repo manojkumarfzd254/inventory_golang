@@ -18,6 +18,18 @@ type Category struct {
 	UpdatedAt    time.Time `json:"updated_at" db:"updated_at"`
 }
 
+type Selectable interface {
+	SelectValue() interface{}
+	SelectLabel() string
+}
+
+func (c Category) SelectLabel() string {
+	return c.CategoryName
+}
+func (c Category) SelectValue() interface{} {
+	return c.ID
+}
+
 // String is not required by pop and may be deleted
 func (c Category) String() string {
 	jc, _ := json.Marshal(c)

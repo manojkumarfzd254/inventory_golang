@@ -171,11 +171,14 @@ func (v BooksResource) Edit(c buffalo.Context) error {
 
 	// Allocate an empty Book
 	book := &models.Book{}
-
+	categories := models.Categories{}
+	if err := tx.Eager().All(&categories); err != nil {
+		return errors.WithStack(err)
+	}
 	if err := tx.Eager().Find(book, c.Param("book_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
-
+	c.Set("categories", categories)
 	c.Set("book", book)
 	return c.Render(http.StatusOK, r2.HTML("backend/books/edit.plush.html"))
 }
@@ -228,7 +231,7 @@ func (v BooksResource) Update(c buffalo.Context) error {
 		c.Flash().Add("success", T.Translate(c, "book.updated.success"))
 
 		// and redirect to the show page
-		return c.Redirect(http.StatusSeeOther, "/books/%v", book.ID)
+		return c.Redirect(http.StatusSeeOther, "/auth/books/%v", book.ID)
 	}).Wants("json", func(c buffalo.Context) error {
 		return c.Render(http.StatusOK, r2.JSON(book))
 	}).Wants("xml", func(c buffalo.Context) error {
