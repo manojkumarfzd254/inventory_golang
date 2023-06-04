@@ -24,6 +24,13 @@
           <tr><th>Mobile</th> <td><%= user.Mobile%></td></tr>
           <tr><th>Address</th> <td><%= user.Address%></td></tr>
           <tr><th>Password</th> <td><%= user.Password%></td></tr>
+          <tr>
+                <th>Created At</th> <td><%= user.CreatedAt.Month()%> <%= user.CreatedAt.Day()%>, <%= user.CreatedAt.Year()%> (<%= user.CreatedAt.Format("03:04 PM") %>)</td>
+              </tr>
+
+              <tr>
+                <th>Updated At</th> <td><%= user.UpdatedAt.Month()%> <%= user.UpdatedAt.Day()%>, <%= user.UpdatedAt.Year()%> (<%= user.UpdatedAt.Format("03:04 PM") %>)</td>
+              </tr>
         </tbody>
       </table>
   </div>

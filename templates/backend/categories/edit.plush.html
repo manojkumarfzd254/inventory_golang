@@ -1,0 +1,7 @@
+<div class="py-4 mb-2">
+  <h3 class="d-inline-block">Edit Category</h3>
+</div>
+
+<%= formFor(category, {action: authCategoryPath({ category_id: category.ID }), method: "PUT"}) { %>
+  <%= partial("backend/categories/form.html") %>
+<% } %>

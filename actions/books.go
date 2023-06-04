@@ -7,6 +7,7 @@ import (
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/x/responder"
+	"github.com/pkg/errors"
 
 	"library/models"
 )
@@ -44,7 +45,7 @@ func (v BooksResource) List(c buffalo.Context) error {
 	q := tx.PaginateFromParams(c.Params())
 
 	// Retrieve all Books from the DB
-	if err := q.All(books); err != nil {
+	if err := q.Eager().All(books); err != nil {
 		return err
 	}
 
@@ -74,7 +75,7 @@ func (v BooksResource) Show(c buffalo.Context) error {
 	book := &models.Book{}
 
 	// To find the Book the parameter book_id is used.
-	if err := tx.Find(book, c.Param("book_id")); err != nil {
+	if err := tx.Eager().Find(book, c.Param("book_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 
@@ -93,12 +94,21 @@ func (v BooksResource) Show(c buffalo.Context) error {
 // This function is mapped to the path GET /books/new
 func (v BooksResource) New(c buffalo.Context) error {
 	c.Set("book", &models.Book{})
-	options := map[string]string{
-		"Beginner":     "Beginner",
-		"Intermediate": "Intermediate",
-		"Advanced":     "Advanced",
+
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
 	}
-	c.Set("statusOptions", options)
+	categories := &models.Categories{}
+
+	// Paginate results. Params "page" and "per_page" control pagination.
+	// Default values are "page=1" and "per_page=20".
+	q := tx.PaginateFromParams(c.Params())
+	c.Set("categories", categories)
+	// Retrieve all Books from the DB
+	if err := q.All(categories); err != nil {
+		return err
+	}
 	return c.Render(http.StatusOK, r2.HTML("backend/books/new.plush.html"))
 }
 
@@ -114,15 +124,10 @@ func (v BooksResource) Create(c buffalo.Context) error {
 	}
 
 	// Get the DB connection from the context
-	tx, ok := c.Value("tx").(*pop.Connection)
-	if !ok {
-		return fmt.Errorf("no transaction found")
-	}
-
-	// Validate the data from the html form
-	verrs, err := tx.ValidateAndCreate(book)
+	tx := c.Value("tx").(*pop.Connection)
+	verrs, err := book.Create(tx)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	if verrs.HasAny() {
@@ -147,7 +152,7 @@ func (v BooksResource) Create(c buffalo.Context) error {
 		c.Flash().Add("success", T.Translate(c, "book.created.success"))
 
 		// and redirect to the show page
-		return c.Redirect(http.StatusSeeOther, "/books/%v", book.ID)
+		return c.Redirect(http.StatusSeeOther, "/auth/books/%v", book.ID)
 	}).Wants("json", func(c buffalo.Context) error {
 		return c.Render(http.StatusCreated, r2.JSON(book))
 	}).Wants("xml", func(c buffalo.Context) error {
@@ -167,7 +172,7 @@ func (v BooksResource) Edit(c buffalo.Context) error {
 	// Allocate an empty Book
 	book := &models.Book{}
 
-	if err := tx.Find(book, c.Param("book_id")); err != nil {
+	if err := tx.Eager().Find(book, c.Param("book_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 

@@ -1,8 +1,60 @@
-<div class="py-4 mb-2">
-  <h3 class="d-inline-block">Edit Book</h3>
+<div class="box box-success">
+  <div class="box-header">Edit Book</div>
+  <div class="box-body">
+    <%= formFor(book, {action: authBookPath({ book_id: book.ID }), method:
+    "PUT"}) { %> <%= partial("backend/books/form.html") %> <% } %>
+  </div>
 </div>
-
-<%= formFor(book, {action: bookPath({ book_id: book.ID }), method: "PUT"}) { %>
-  <%= partial("books/form.html") %>
-  <%= linkTo(bookPath({ book_id: book.ID }), {class: "btn btn-warning", "data-confirm": "Are you sure?", body: "Cancel"}) %>
+<% contentFor("afterScripts") { %>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $(".categories-select2").select2({
+      // theme: "bootstrap",
+      placeholder: 'Select an option"',
+      minimumInputLength: 0,
+      allowClear: true,
+      ajax: {
+        url: '<%=authCategoriesPath()%>',
+        dataType: "json",
+        data: function (params) {
+          return {
+            q: $.trim(params.term),
+          };
+        },
+        processResults: function (data) {
+          return {
+            results: data.map(function (category) {
+              return {
+                id: category.id,
+                text: category.category_name
+              };
+            })
+          };
+        },
+        cache: true,
+      },
+      initSelection: function(element, callback) {
+      // Get the selected category ID
+      var selectedCategoryId = $(element).val();
+      
+      // Make an AJAX request to get the selected category
+      $.ajax({
+        url: '<%=authCategoryPath({category_id:book.Category.ID})%>', // Replace with your AJAX endpoint
+        dataType: "json"
+      }).done(function(category) {
+        // Format the selected category for Select2
+        var selectedOption = {
+          id: category.ID,
+          text: category.CategoryName
+        };
+        
+        // Invoke the callback to set the selected option
+        callback(selectedOption);
+      });
+    }
+    });
+  });
+</script>
 <% } %>

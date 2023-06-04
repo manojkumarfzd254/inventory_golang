@@ -1,17 +1,55 @@
-<div class="py-4 mb-2">
-  <h3 class="d-inline-block">Book Details</h3>
+<div class="box box-success">
+  <div class="box-header">
+    Book Details
+    <div class="float-end">
+      <%= linkTo(authBooksPath(), {class: "btn btn-info"}) { %> Back to all
+      Books <% } %> <%= linkTo(editAuthBookPath({ book_id: book.ID }), {class:
+      "btn btn-warning", body: "Edit"}) %> <%= linkTo(authBookPath({ book_id:
+      book.ID }), {class: "btn btn-danger", "data-method": "DELETE",
+      "data-confirm": "Are you sure?", body: "Destroy"}) %>
+    </div>
+  </div>
+  <div class="box-body">
+        <table class="table table-bordered table-striped">
+          <tbody>
+              <tr>
+                <th>Picture</th> <td><img src="<%= book.PicturePath%>" style="width:80px;height:100px"></td>
+              </tr>
+              <tr>
+                <th>ID</th> <td><%= book.ID%></td>
+              </tr>
+              <tr>
+                <th>Category</th> <td><%= book.Category.CategoryName%></td>
+              </tr>
+              <tr>
+                <th>Title</th> <td><%= book.Title%></td>
+              </tr>
+              <tr>
+                <th>Book No.</th> <td><%= book.BookNo%></td>
+              </tr>
+              <tr>
+                <th>Author</th> <td><%= book.Author%></td>
+              </tr>
+              <tr>
+                <th>Price</th> <td><%= book.Price%></td>
+              </tr>
+              <tr>
+                <th>Status</th> <td><%= if(book.Status ==1){ %>
+              <span class="label label-success">Active</span>
+            <% } else {%>
+              <span class="label label-danger">De-Active</span>
+            <% }%></td>
+              </tr>
+              <tr>
+                <th>Created At</th> <td><%= book.CreatedAt.Month()%> <%= book.CreatedAt.Day()%>, <%= book.CreatedAt.Year()%> (<%= book.CreatedAt.Format("03:04 PM") %>)</td>
+              </tr>
 
-  <div class="float-end">
-    <%= linkTo(booksPath(), {class: "btn btn-info"}) { %>
-      Back to all Books
-    <% } %>
-    <%= linkTo(editBookPath({ book_id: book.ID }), {class: "btn btn-warning", body: "Edit"}) %>
-    <%= linkTo(bookPath({ book_id: book.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+              <tr>
+                <th>Updated At</th> <td><%= book.UpdatedAt.Month()%> <%= book.UpdatedAt.Day()%>, <%= book.UpdatedAt.Year()%> (<%= book.UpdatedAt.Format("03:04 PM") %>)</td>
+              </tr>
+              
+          </tbody>
+        </table>
   </div>
 </div>
 
-
-
-<ul class="list-group mb-2 ">
-
-</ul>

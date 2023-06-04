@@ -11,6 +11,8 @@
     <meta name="csrf-param" content="authenticity_token" />
     <meta name="csrf-token" content="<%= authenticity_token %>" />
     <link rel="icon" href="<%= assetPath("images/favicon.ico") %>">
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   </head>
   <body>
     <nav class="navbar navbar-default no-margin bg-blue" style="height: 48px;">
@@ -50,11 +52,13 @@
     </div>
     <!-- /#wrapper -->
     <!-- jQuery -->
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <%= javascriptTag("application.js") %>
     <%= javascriptTag("bootstrap.min.js") %>
     <%= javascriptTag("custom.js") %>
+    <%= contentOf("afterScripts"){ %>
 
+      <% }%>
 
 <style>
    
@@ -217,7 +221,7 @@
   }
   
   </style>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+ 
   <script>
     $("#menu-toggle").click(function(e) {
      e.preventDefault();

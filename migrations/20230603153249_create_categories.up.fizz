@@ -1,0 +1,6 @@
+create_table("categories") {
+	t.Column("id", "uuid", {primary: true})
+	t.Column("category_name", "string", {"size": 150})
+	t.Column("status","integer", {})
+	t.Timestamps()
+}

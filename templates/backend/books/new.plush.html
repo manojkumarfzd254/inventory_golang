@@ -1,7 +1,42 @@
 <div class="box box-primary">
   <div class="box-header">Create a book</div>
   <div class="box-body">
-    <%= formFor(book, {action: newAuthBooksPath(), method: "POST"}) { %> <%=
+    <%= formFor(book, {action: authBooksPath(), method: "POST"}) { %> <%=
     partial("backend/books/form.html") %> <% } %>
   </div>
 </div>
+
+<% contentFor("afterScripts") { %>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $(".categories-select2").select2({
+      // theme: "bootstrap",
+      placeholder: 'Select an option"',
+      minimumInputLength: 0,
+      allowClear: true,
+      ajax: {
+        url: '<%=authCategoriesPath()%>',
+        dataType: "json",
+        data: function (params) {
+          return {
+            q: $.trim(params.term),
+          };
+        },
+        processResults: function (data) {
+          return {
+            results: data.map(function (category) {
+              return {
+                id: category.id,
+                text: category.category_name
+              };
+            })
+          };
+        },
+        cache: true,
+      },
+    });
+  });
+</script>
+<% } %>

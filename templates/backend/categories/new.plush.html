@@ -1,0 +1,7 @@
+<div class="box box-success">
+  <div class="box-header">Create a Category</div>
+  <div class="box-body">
+    <%= formFor(category, {action: authCategoriesPath(), method: "POST"}) { %>
+    <%= partial("backend/categories/form.html") %>  <% } %>
+  </div>
+</div>

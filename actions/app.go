@@ -96,6 +96,9 @@ func App() *buffalo.App {
 		// book resource route
 		auth.Resource("/books", BooksResource{})
 
+		// Categories resource route
+		auth.Resource("/categories", CategoriesResource{})
+
 		//Routes for User registration
 		users := app.Group("/users")
 		users.GET("/new", UsersNew)

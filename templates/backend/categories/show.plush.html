@@ -1,0 +1,39 @@
+
+<div class="box box-success">
+  <div class="box-header">Category Details
+  <div class="float-end">
+    <%= linkTo(authCategoriesPath(), {class: "btn btn-info"}) { %>
+      Back to all Categories
+    <% } %>
+    <%= linkTo(editAuthCategoryPath({ category_id: category.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+    <%= linkTo(authCategoryPath({ category_id: category.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+  </div>
+  </div>
+  <div class="box-body">
+  <table class="table table-striped table-bordered">
+        <tbody>
+          
+          <tr><th>ID</th> <td><%= category.ID%></td></tr>
+          <tr><th>Category Name</th> <td><%= category.CategoryName%></td></tr>
+          <tr><th>Status</th> <td>
+            <%= if(category.Status ==1){ %>
+              <span class="label label-success">Active</span>
+            <% } else {%>
+              <span class="label label-danger">De-Active</span>
+            <% }%>
+              
+          </td></tr>
+          <tr>
+                <th>Created At</th> <td><%= category.CreatedAt.Month()%> <%= category.CreatedAt.Day()%>, <%= category.CreatedAt.Year()%> (<%= category.CreatedAt.Format("03:04 PM") %>)</td>
+              </tr>
+
+              <tr>
+                <th>Updated At</th> <td><%= category.UpdatedAt.Month()%> <%= category.UpdatedAt.Day()%>, <%= category.UpdatedAt.Year()%> (<%= category.UpdatedAt.Format("03:04 PM") %>)</td>
+              </tr>
+        </tbody>
+      </table>
+  </div>
+</div>
+
+
+

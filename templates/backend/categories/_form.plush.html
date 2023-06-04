@@ -1,0 +1,12 @@
+<div class="form-group col-md-6">
+  <%= f.InputTag("CategoryName", {class: "form-control", placeholder: "Enter
+  Category Name"}) %>
+</div>
+<div class="form-group col-md-6">
+<%= f.SelectTag("Status", {options: {"Active": 1, "De-Active": 0}}) %>
+</div> 
+<div class="form-group col-md-12">
+  <button class="btn btn-success" role="submit">Save</button>
+  <%= linkTo(authCategoriesPath(), {class: "btn btn-warning", "data-confirm":
+  "Are you sure?", body: "Cancel"}) %>
+</div>
