@@ -42,16 +42,16 @@
       // Make an AJAX request to get the selected category
       $.ajax({
         url: '<%=authCategoryPath({category_id:book.Category.ID})%>', // Replace with your AJAX endpoint
-        dataType: "json"
-      }).done(function(category) {
-        // Format the selected category for Select2
-        var selectedOption = {
-          id: category.ID,
-          text: category.CategoryName
-        };
+        dataType: "json",
+        success:function(category) {
+          var selectedOption = {
+            id: category.ID,
+            text: category.CategoryName
+          };
         
         // Invoke the callback to set the selected option
         callback(selectedOption);
+        }
       });
     }
     });

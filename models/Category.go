@@ -16,7 +16,6 @@ type Category struct {
 	Status       int       `json:"status" db:"status"`
 	CreatedAt    time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at" db:"updated_at"`
-	Book         Book      `has_many:"books"`
 }
 
 // String is not required by pop and may be deleted
