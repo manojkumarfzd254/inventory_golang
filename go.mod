@@ -13,6 +13,7 @@ require (
 	github.com/gobuffalo/validate/v3 v3.3.3
 	github.com/gobuffalo/x v0.1.0
 	github.com/gofrs/uuid v4.4.0+incompatible
+	github.com/google/uuid v1.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/unrolled/secure v1.13.0
 	golang.org/x/crypto v0.9.0

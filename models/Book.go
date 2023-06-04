@@ -10,6 +10,7 @@ import (
 	"github.com/gobuffalo/buffalo/binding"
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
+	"github.com/gobuffalo/validate/v3/validators"
 	"github.com/gofrs/uuid"
 	"github.com/pkg/errors"
 )
@@ -23,7 +24,7 @@ type Book struct {
 	Author      string       `json:"author" db:"author"`
 	Picture     binding.File `db:"-" form:"picture"`
 	PicturePath string       `json:"picture_path" db:"picture_path"`
-	Price       float64      `json:"price" db:"price"`
+	Price       string       `json:"price" db:"price"`
 	Status      int          `json:"status" db:"status"`
 	CreatedAt   time.Time    `json:"created_at" db:"created_at"`
 	UpdatedAt   time.Time    `json:"updated_at" db:"updated_at"`
@@ -44,31 +45,93 @@ func (b Books) String() string {
 	jb, _ := json.Marshal(b)
 	return string(jb)
 }
-
 func (b *Book) Create(tx *pop.Connection) (*validate.Errors, error) {
+	// Create the directory for storing book pictures
 
-	dir := filepath.Join(".", "uploads/books")
-	if err := os.MkdirAll(dir, 0755); err != nil {
-		return validate.NewErrors(), errors.WithStack(err)
+	// uuid := uuid.New()
+	// Generate a unique filename for the picture
+	if b.Picture.Valid() {
+		dir := filepath.Join(".", "uploads", "books")
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return validate.NewErrors(), errors.WithStack(err)
+		}
+
+		filename := uuid.NamespaceDNS.String() + filepath.Ext(b.Picture.Filename)
+		filePath := filepath.Join(dir, filename)
+
+		// Create the file and copy the picture data
+		file, err := os.Create(filePath)
+		if err != nil {
+			return validate.NewErrors(), errors.WithStack(err)
+		}
+		defer file.Close()
+
+		_, err = io.Copy(file, b.Picture)
+		if err != nil {
+			return validate.NewErrors(), errors.WithStack(err)
+		}
+
+		// Set the PicturePath field of the Book struct
+		b.PicturePath = "/" + filePath
+	}
+	// Validate and create the book record in the database
+	verrs, err := tx.ValidateAndCreate(b)
+	if err != nil {
+		return verrs, errors.WithStack(err)
 	}
 
-	f, err := os.Create(filepath.Join(dir, b.Picture.Filename))
-	if err != nil {
-		return validate.NewErrors(), errors.WithStack(err)
+	return verrs, nil
+}
+
+func (b *Book) Update(tx *pop.Connection) (*validate.Errors, error) {
+	// Create the directory for storing book pictures
+
+	// uuid := uuid.New()
+	// Generate a unique filename for the picture
+	if b.Picture.Valid() {
+		dir := filepath.Join(".", "uploads", "books")
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return validate.NewErrors(), errors.WithStack(err)
+		}
+
+		filename := uuid.NamespaceDNS.String() + filepath.Ext(b.Picture.Filename)
+		filePath := filepath.Join(dir, filename)
+
+		// Create the file and copy the picture data
+		file, err := os.Create(filePath)
+		if err != nil {
+			return validate.NewErrors(), errors.WithStack(err)
+		}
+		defer file.Close()
+
+		_, err = io.Copy(file, b.Picture)
+		if err != nil {
+			return validate.NewErrors(), errors.WithStack(err)
+		}
+
+		// Set the PicturePath field of the Book struct
+		b.PicturePath = "/" + filePath
 	}
-	defer f.Close()
-	_, err = io.Copy(f, b.Picture)
+	// Validate and create the book record in the database
+	verrs, err := tx.ValidateAndUpdate(b)
 	if err != nil {
-		return validate.NewErrors(), errors.WithStack(err)
+		return verrs, errors.WithStack(err)
 	}
-	b.PicturePath = "/" + filepath.Join(dir, b.Picture.Filename)
-	return tx.ValidateAndCreate(b)
+
+	return verrs, nil
 }
 
 // Validate gets run every time you call a "pop.Validate*" (pop.ValidateAndSave, pop.ValidateAndCreate, pop.ValidateAndUpdate) method.
 // This method is not required and may be deleted.
 func (b *Book) Validate(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.NewErrors(), nil
+	return validate.Validate(
+		&validators.StringIsPresent{Field: b.Title, Name: "Title"},
+		&validators.StringIsPresent{Field: b.CategoryID, Name: "CategoryID"},
+		&validators.StringIsPresent{Field: b.BookNo, Name: "BookNo"},
+		&validators.StringIsPresent{Field: b.Author, Name: "Author"},
+		&validators.StringIsPresent{Field: b.Price, Name: "Price"},
+		// &validators.IntIsPresent{Field: b.Status, Name: "Status"},
+	), nil
 }
 
 // ValidateCreate gets run every time you call "pop.ValidateAndCreate" method.

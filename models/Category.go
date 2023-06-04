@@ -6,6 +6,7 @@ import (
 
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
+	"github.com/gobuffalo/validate/v3/validators"
 	"github.com/gofrs/uuid"
 )
 
@@ -54,7 +55,13 @@ func (c *Category) Validate(tx *pop.Connection) (*validate.Errors, error) {
 // ValidateCreate gets run every time you call "pop.ValidateAndCreate" method.
 // This method is not required and may be deleted.
 func (c *Category) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.NewErrors(), nil
+	var err error
+	return validate.Validate(
+		&validators.StringIsPresent{Field: c.CategoryName, Name: "CategoryName"},
+		&validators.IntIsPresent{Field: c.Status, Name: "Status"},
+		// check to see if the email address is already taken:
+
+	), err
 }
 
 // ValidateUpdate gets run every time you call "pop.ValidateAndUpdate" method.

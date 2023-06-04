@@ -125,7 +125,14 @@ func (v BooksResource) Create(c buffalo.Context) error {
 
 	// Get the DB connection from the context
 	tx := c.Value("tx").(*pop.Connection)
+
+	var categories []*models.Category
+	if err := tx.All(&categories); err != nil {
+		return errors.WithStack(err)
+	}
+
 	verrs, err := book.Create(tx)
+	// verrs, err := book.Create(tx)
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -138,6 +145,7 @@ func (v BooksResource) Create(c buffalo.Context) error {
 			// Render again the new.html template that the user can
 			// correct the input.
 			c.Set("book", book)
+			c.Set("categories", categories)
 
 			return c.Render(http.StatusUnprocessableEntity, r2.HTML("backend/books/new.plush.html"))
 		}).Wants("json", func(c buffalo.Context) error {
@@ -146,7 +154,9 @@ func (v BooksResource) Create(c buffalo.Context) error {
 			return c.Render(http.StatusUnprocessableEntity, r2.XML(verrs))
 		}).Respond(c)
 	}
-
+	// if err := tx.Create(book); err != nil {
+	// 	return errors.WithStack(err)
+	// }
 	return responder.Wants("html", func(c buffalo.Context) error {
 		// If there are no errors set a success message
 		c.Flash().Add("success", T.Translate(c, "book.created.success"))
@@ -203,10 +213,13 @@ func (v BooksResource) Update(c buffalo.Context) error {
 	if err := c.Bind(book); err != nil {
 		return err
 	}
-
-	verrs, err := tx.ValidateAndUpdate(book)
+	var categories []*models.Category
+	if err := tx.All(&categories); err != nil {
+		return errors.WithStack(err)
+	}
+	verrs, err := book.Update(tx)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	if verrs.HasAny() {
@@ -217,6 +230,7 @@ func (v BooksResource) Update(c buffalo.Context) error {
 			// Render again the edit.html template that the user can
 			// correct the input.
 			c.Set("book", book)
+			c.Set("categories", categories)
 
 			return c.Render(http.StatusUnprocessableEntity, r2.HTML("backend/books/edit.plush.html"))
 		}).Wants("json", func(c buffalo.Context) error {
