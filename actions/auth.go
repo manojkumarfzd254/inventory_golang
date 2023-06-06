@@ -16,7 +16,7 @@ import (
 
 // AuthLanding shows a landing page to login
 func AuthLanding(c buffalo.Context) error {
-	return c.Render(http.StatusOK, r2.HTML("auth/landing.html"))
+	return c.Render(http.StatusOK, r2.HTML("backend/dashboard.plush.html"))
 }
 
 // AuthNew loads the signin page

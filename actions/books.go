@@ -279,7 +279,7 @@ func (v BooksResource) Destroy(c buffalo.Context) error {
 		c.Flash().Add("success", T.Translate(c, "book.destroyed.success"))
 
 		// Redirect to the index page
-		return c.Redirect(http.StatusSeeOther, "/books")
+		return c.Redirect(http.StatusSeeOther, "/auth/books")
 	}).Wants("json", func(c buffalo.Context) error {
 		return c.Render(http.StatusOK, r2.JSON(book))
 	}).Wants("xml", func(c buffalo.Context) error {

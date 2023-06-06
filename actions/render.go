@@ -31,7 +31,7 @@ func init() {
 	})
 
 	r2 = render.New(render.Options{
-		HTMLLayout: "backend/application.plush.html",
+		HTMLLayout: "backend/layout/application.plush.html",
 
 		// fs.FS containing templates
 		TemplatesFS: templates.FS(),

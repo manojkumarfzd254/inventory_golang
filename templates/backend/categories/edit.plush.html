@@ -1,7 +1,8 @@
-<div class="py-4 mb-2">
-  <h3 class="d-inline-block">Edit Category</h3>
+<div class="box box-success">
+  <div class="box-header">Edit Category</div>
+  <div class="box-body">
+    <%= formFor(category, {action: authCategoryPath({ category_id: category.ID
+    }), method: "PUT"}) { %> <%= partial("backend/categories/form.html") %> <% }
+    %>
+  </div>
 </div>
-
-<%= formFor(category, {action: authCategoryPath({ category_id: category.ID }), method: "PUT"}) { %>
-  <%= partial("backend/categories/form.html") %>
-<% } %>
