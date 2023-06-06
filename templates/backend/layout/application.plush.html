@@ -42,16 +42,8 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <h1>
-        Dashboard
-        <small>Version 2.0</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Dashboard</li>
-      </ol>
-    </section>
+    <%= partial("backend/layout/breadcrumb")%>
+    
 
     <!-- Main content -->
     <section class="content">
@@ -267,7 +259,7 @@
 <%= javascriptTag("application.js") %>
 <!-- <%= javascriptTag("bootstrap.min.js") %> -->
 <!-- ./wrapper -->
-<%= javascriptTag("bower_components/jquery/dist/jquery.min.js") %>
+<!-- <%= javascriptTag("bower_components/jquery/dist/jquery.min.js") %> -->
 <%= javascriptTag("bower_components/bootstrap/dist/js/bootstrap.min.js") %>
 <%= javascriptTag("bower_components/fastclick/lib/fastclick.js") %>
 <%= javascriptTag("dist/js/adminlte.min.js") %>
