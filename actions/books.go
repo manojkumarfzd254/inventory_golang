@@ -57,11 +57,16 @@ func (v BooksResource) List(c buffalo.Context) error {
 		return c.Render(http.StatusOK, r2.HTML("backend/books/index.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
 		if c.Param("q") != "" {
-			if err := tx.Where("title LIKE ?", "%"+c.Param("q")+"%").PaginateFromParams(c.Params()).All(books); err != nil {
+			if err := tx.
+				RawQuery("SELECT books.* FROM books WHERE NOT EXISTS (SELECT 1 FROM inventories WHERE inventories.book_id = books.id) AND books.title LIKE ?", "%"+c.Param("q")+"%").
+				// PaginateFromParams(c.Params()).
+				All(books); err != nil {
 				return err
 			}
 		} else {
-			if err := q.All(books); err != nil {
+			if err := q.
+				RawQuery("SELECT books.* FROM books WHERE NOT EXISTS (SELECT 1 FROM inventories WHERE inventories.book_id = books.id)").
+				All(books); err != nil {
 				return err
 			}
 		}
