@@ -34,6 +34,9 @@
                 <th>Price</th> <td><%= book.Price%></td>
               </tr>
               <tr>
+                <th>Inventories</th> <td><%= book.Inventory.Qty%></td>
+              </tr>
+              <tr>
                 <th>Status</th> <td><%= if(book.Status ==1){ %>
               <span class="label label-success">Active</span>
             <% } else {%>

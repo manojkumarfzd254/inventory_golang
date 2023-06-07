@@ -1,0 +1,12 @@
+create_table("inventories") {
+	t.Column("id", "uuid", {primary: true})
+	t.Column("book_id", "char",{"size":36})
+	t.Column("qty","integer", {})
+	t.Timestamps()
+}
+
+add_foreign_key("inventories", "book_id", {"books": ["id"]}, {
+    "name": "invent_book_id",
+    "on_delete": "cascade",
+    "on_update": "cascade",
+})

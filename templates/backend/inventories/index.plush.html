@@ -1,0 +1,45 @@
+<div class="box box-success">
+  <div class="box-header">
+    Inventories
+    <div class="pull-right">
+      <%= linkTo(newAuthInventoriesPath(), {class: "btn btn-primary"}) { %>
+      Create New Inventory <% } %>
+    </div>
+  </div>
+  <div class="box-body">
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered">
+        <thead class="thead-light">
+          <th>Book Title</th>
+          <th>Inventories</th>
+          <th>Action</th>
+        </thead>
+        <tbody>
+          <%= for (inventory) in inventories { %>
+          <tr>
+            <td><%=inventory.Book.Title%></td>
+            <td><%=inventory.Qty%></td>
+            <td>
+              <div class="pull-right">
+                <%= linkTo(authInventoryPath({ inventory_id: inventory.ID }),
+                {class: "btn btn-default", body: "<i class='fa fa-eye'></i>"})
+                %> <%= linkTo(editAuthInventoryPath({ inventory_id: inventory.ID
+                }), {class: "btn btn-default", body: "<i class='fa fa-edit'></i
+                >"}) %> <%= linkTo(authInventoryPath({ inventory_id:
+                inventory.ID }), {class: "btn btn-default", "data-method":
+                "DELETE", "data-confirm": "Are you sure?", body: "<i
+                  class='fa fa-trash'
+                ></i
+                >"}) %>
+              </div>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="text-center"><%= paginator(pagination) %></div>
+  </div>
+</div>

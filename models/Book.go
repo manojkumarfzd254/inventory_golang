@@ -29,6 +29,7 @@ type Book struct {
 	CreatedAt   time.Time    `json:"created_at" db:"created_at"`
 	UpdatedAt   time.Time    `json:"updated_at" db:"updated_at"`
 	Category    *Category    `belongs_to:"categories"`
+	Inventory   Inventory    `has_one:"inventories" fk_id:"book_id"`
 }
 
 // String is not required by pop and may be deleted

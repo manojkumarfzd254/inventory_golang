@@ -47,11 +47,20 @@
             <i class="fa fa-leaf"></i> <span> Categories Management</span>
           </a>
         </li>
-        <li>
-          <a href="<%= authBooksPath()%>">
-            <i class="fa fa-book"></i> <span> Books Management</span>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-book"></i>
+            <span>Books Management</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
           </a>
+          <ul class="treeview-menu">
+            <li><a href="<%= authBooksPath()%>"><i class="fa fa-circle-o"></i> Books</a></li>
+            <li><a href="<%= authInventoriesPath()%>"><i class="fa fa-circle-o"></i> Inventories</a></li>
+          </ul>
         </li>
+        
 
 
      

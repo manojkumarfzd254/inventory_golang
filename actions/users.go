@@ -51,7 +51,7 @@ func UserEdit(c buffalo.Context) error {
 	}
 
 	c.Set("user", user)
-	c.Set("checkID", c.Param("ID"))
+	c.Set("checkID", user.ID)
 	return c.Render(http.StatusOK, r2.HTML("backend/users/edit.plush.html"))
 }
 

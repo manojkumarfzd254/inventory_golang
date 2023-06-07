@@ -1,0 +1,10 @@
+<div class="box box-success">
+  <div class="box-header">
+    <h3 class="d-inline-block">Edit Inventory</h3>
+  </div>
+  <div class="box-body">
+  <%= formFor(inventory, {action: authInventoryPath({ inventory_id: inventory.ID }), method: "PUT"}) { %>
+  <%= partial("backend/inventories/form.html") %>
+<% } %>
+  </div>
+</div>

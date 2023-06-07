@@ -56,6 +56,15 @@ func (v BooksResource) List(c buffalo.Context) error {
 		c.Set("books", books)
 		return c.Render(http.StatusOK, r2.HTML("backend/books/index.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
+		if c.Param("q") != "" {
+			if err := tx.Where("title LIKE ?", "%"+c.Param("q")+"%").PaginateFromParams(c.Params()).All(books); err != nil {
+				return err
+			}
+		} else {
+			if err := q.All(books); err != nil {
+				return err
+			}
+		}
 		return c.Render(200, r2.JSON(books))
 	}).Wants("xml", func(c buffalo.Context) error {
 		return c.Render(200, r2.XML(books))
