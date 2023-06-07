@@ -268,5 +268,20 @@
 <%= contentOf("afterScripts"){ %>
 
 <% }%>
+<script>
+  $(function(){
+
+    var url = window.location.pathname, 
+        urlRegExp = new RegExp(url.replace(/\/$/,'') + "$"); 
+        $('.sidebar-menu li a').each(function(){
+            if(urlRegExp.test(this.href.replace(/\/$/,''))){
+                $(this).parent('li').addClass('active');
+                $(this).parents('.treeview').addClass('menu-open active');
+                $(this).parents('.treeview-menu').show();
+            }
+        });
+
+    });
+</script>
 </body>
 </html>
