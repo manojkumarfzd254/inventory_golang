@@ -52,7 +52,7 @@ func (v BooksResource) List(c buffalo.Context) error {
 	return responder.Wants("html", func(c buffalo.Context) error {
 		// Add the paginator to the context so it can be used in the template.
 		c.Set("pagination", q.Paginator)
-
+		c.Set("PageTitle", "Books List")
 		c.Set("books", books)
 		return c.Render(http.StatusOK, r2.HTML("backend/books/index.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
@@ -95,7 +95,7 @@ func (v BooksResource) Show(c buffalo.Context) error {
 
 	return responder.Wants("html", func(c buffalo.Context) error {
 		c.Set("book", book)
-
+		c.Set("PageTitle", "Show Book")
 		return c.Render(http.StatusOK, r2.HTML("backend/books/show.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
 		return c.Render(200, r2.JSON(book))
@@ -119,6 +119,7 @@ func (v BooksResource) New(c buffalo.Context) error {
 	// Default values are "page=1" and "per_page=20".
 	q := tx.PaginateFromParams(c.Params())
 	c.Set("categories", categories)
+	c.Set("PageTitle", "Create Category")
 	// Retrieve all Books from the DB
 	if err := q.All(categories); err != nil {
 		return err
@@ -204,6 +205,7 @@ func (v BooksResource) Edit(c buffalo.Context) error {
 	}
 	c.Set("categories", categories)
 	c.Set("book", book)
+	c.Set("PageTitle", "Edit Category")
 	return c.Render(http.StatusOK, r2.HTML("backend/books/edit.plush.html"))
 }
 

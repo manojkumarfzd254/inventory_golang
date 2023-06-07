@@ -23,7 +23,7 @@ func UserCreate(c buffalo.Context) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-
+	c.Set("PageTitle", "Create User")
 	if verrs.HasAny() {
 		c.Set("user", u)
 		c.Set("errors", verrs)
@@ -52,6 +52,7 @@ func UserEdit(c buffalo.Context) error {
 
 	c.Set("user", user)
 	c.Set("checkID", user.ID)
+	c.Set("PageTitle", "Edit User")
 	return c.Render(http.StatusOK, r2.HTML("backend/users/edit.plush.html"))
 }
 
@@ -70,6 +71,7 @@ func UserShow(c buffalo.Context) error {
 	}
 
 	c.Set("user", user)
+	c.Set("PageTitle", "Show User")
 	return c.Render(http.StatusOK, r2.HTML("backend/users/show.plush.html"))
 }
 
@@ -143,6 +145,7 @@ func UserList(c buffalo.Context) error {
 		c.Set("pagination", q.Paginator)
 
 		c.Set("users", Users)
+		c.Set("PageTitle", "Users List")
 		return c.Render(http.StatusOK, r2.HTML("backend/users/index.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
 		return c.Render(200, r.JSON(Users))
@@ -232,6 +235,7 @@ func UserDelete(c buffalo.Context) error {
 func UsersNew(c buffalo.Context) error {
 	u := models.User{}
 	c.Set("user", u)
+
 	return c.Render(http.StatusOK, r.HTML("users/new.plush.html"))
 }
 

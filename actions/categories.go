@@ -51,7 +51,7 @@ func (v CategoriesResource) List(c buffalo.Context) error {
 	return responder.Wants("html", func(c buffalo.Context) error {
 		// Add the paginator to the context so it can be used in the template.
 		c.Set("pagination", q.Paginator)
-
+		c.Set("PageTitle", "Categories List")
 		c.Set("categories", categories)
 		return c.Render(http.StatusOK, r2.HTML("backend/categories/index.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
@@ -90,7 +90,7 @@ func (v CategoriesResource) Show(c buffalo.Context) error {
 
 	return responder.Wants("html", func(c buffalo.Context) error {
 		c.Set("category", category)
-
+		c.Set("PageTitle", "Show Category")
 		return c.Render(http.StatusOK, r2.HTML("backend/categories/show.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
 		return c.Render(200, r2.JSON(category))
@@ -103,7 +103,7 @@ func (v CategoriesResource) Show(c buffalo.Context) error {
 // This function is mapped to the path GET /categories/new
 func (v CategoriesResource) New(c buffalo.Context) error {
 	c.Set("category", &models.Category{})
-
+	c.Set("PageTitle", "Create Category")
 	return c.Render(http.StatusOK, r2.HTML("backend/categories/new.plush.html"))
 }
 
@@ -177,6 +177,7 @@ func (v CategoriesResource) Edit(c buffalo.Context) error {
 	}
 
 	c.Set("category", category)
+	c.Set("PageTitle", "Edit Category")
 	return c.Render(http.StatusOK, r2.HTML("backend/categories/edit.plush.html"))
 }
 

@@ -51,7 +51,7 @@ func (v InventoriesResource) List(c buffalo.Context) error {
 	return responder.Wants("html", func(c buffalo.Context) error {
 		// Add the paginator to the context so it can be used in the template.
 		c.Set("pagination", q.Paginator)
-
+		c.Set("PageTitle", "Inventories List")
 		c.Set("inventories", inventories)
 		return c.Render(http.StatusOK, r2.HTML("backend/inventories/index.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
@@ -80,7 +80,7 @@ func (v InventoriesResource) Show(c buffalo.Context) error {
 
 	return responder.Wants("html", func(c buffalo.Context) error {
 		c.Set("inventory", inventory)
-
+		c.Set("PageTitle", "Show Inventory")
 		return c.Render(http.StatusOK, r2.HTML("backend/inventories/show.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
 		return c.Render(200, r2.JSON(inventory))
@@ -93,7 +93,7 @@ func (v InventoriesResource) Show(c buffalo.Context) error {
 // This function is mapped to the path GET /inventories/new
 func (v InventoriesResource) New(c buffalo.Context) error {
 	c.Set("inventory", &models.Inventory{})
-
+	c.Set("PageTitle", "Create Inventory")
 	return c.Render(http.StatusOK, r2.HTML("backend/inventories/new.plush.html"))
 }
 
@@ -167,7 +167,7 @@ func (v InventoriesResource) Edit(c buffalo.Context) error {
 	}
 
 	c.Set("inventory", inventory)
-	c.Set("checkID", c.Param("ID"))
+	c.Set("PageTitle", "Edit Inventory")
 	return c.Render(http.StatusOK, r2.HTML("backend/inventories/edit.plush.html"))
 }
 
