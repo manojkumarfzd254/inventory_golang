@@ -42,11 +42,10 @@ func (v BooksResource) List(c buffalo.Context) error {
 
 	// Paginate results. Params "page" and "per_page" control pagination.
 	// Default values are "page=1" and "per_page=20".
-	fmt.Println(c.Params())
-	q := tx.PaginateFromParams(c.Params())
 
+	q := tx.PaginateFromParams(c.Params())
 	// Retrieve all Books from the DB
-	if err := q.Eager().All(books); err != nil {
+	if err := q.Order("title asc").Eager().All(books); err != nil {
 		return err
 	}
 
