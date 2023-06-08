@@ -5,6 +5,8 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gobuffalo/buffalo/binding"
@@ -57,7 +59,11 @@ func (b *Book) Create(tx *pop.Connection) (*validate.Errors, error) {
 			return validate.NewErrors(), errors.WithStack(err)
 		}
 
-		filename := uuid.NamespaceDNS.String() + filepath.Ext(b.Picture.Filename)
+		currentTime := time.Now()
+		// Convert the current time to a numerical representation
+		timeNumber := currentTime.Unix()
+		ext := filepath.Ext(b.Picture.Filename)
+		filename := strconv.FormatInt(timeNumber, 10) + ext
 		filePath := filepath.Join(dir, filename)
 
 		// Create the file and copy the picture data
@@ -94,8 +100,11 @@ func (b *Book) Update(tx *pop.Connection) (*validate.Errors, error) {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			return validate.NewErrors(), errors.WithStack(err)
 		}
-
-		filename := uuid.NamespaceDNS.String() + filepath.Ext(b.Picture.Filename)
+		currentTime := time.Now()
+		// Convert the current time to a numerical representation
+		timeNumber := currentTime.Unix()
+		ext := filepath.Ext(b.Picture.Filename)
+		filename := strconv.FormatInt(timeNumber, 10) + ext
 		filePath := filepath.Join(dir, filename)
 
 		// Create the file and copy the picture data
@@ -108,6 +117,12 @@ func (b *Book) Update(tx *pop.Connection) (*validate.Errors, error) {
 		_, err = io.Copy(file, b.Picture)
 		if err != nil {
 			return validate.NewErrors(), errors.WithStack(err)
+		}
+		if b.PicturePath != "" && b.PicturePath != "/"+filePath {
+			picturePath := strings.TrimLeft(b.PicturePath, "/")
+			if err := os.Remove(picturePath); err != nil {
+				return validate.NewErrors(), errors.WithStack(err)
+			}
 		}
 
 		// Set the PicturePath field of the Book struct

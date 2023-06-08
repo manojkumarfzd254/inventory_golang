@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -54,6 +55,12 @@ func (u *User) Update(tx *pop.Connection) (*validate.Errors, error) {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			return validate.NewErrors(), errors.WithStack(err)
 		}
+		currentTime := time.Now()
+		// Convert the current time to a numerical representation
+		timeNumber := currentTime.Unix()
+		ext := filepath.Ext(u.Profile.Filename)
+		filename := strconv.FormatInt(timeNumber, 10) + ext
+		filePath := filepath.Join(dir, filename)
 
 		f, err := os.Create(filepath.Join(dir, u.Profile.Filename))
 		if err != nil {
@@ -63,6 +70,12 @@ func (u *User) Update(tx *pop.Connection) (*validate.Errors, error) {
 		_, err = io.Copy(f, u.Profile)
 		if err != nil {
 			return validate.NewErrors(), errors.WithStack(err)
+		}
+		if u.ProfilePath != "" && u.ProfilePath != "/"+filePath {
+			ProfilePath := strings.TrimLeft(u.ProfilePath, "/")
+			if err := os.Remove(ProfilePath); err != nil {
+				return validate.NewErrors(), errors.WithStack(err)
+			}
 		}
 		u.ProfilePath = "/" + filepath.Join(dir, u.Profile.Filename)
 	}
