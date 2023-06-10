@@ -15,7 +15,9 @@
   <%= stylesheetTag("bower_components/Ionicons/css/ionicons.min.css") %>
   <%= stylesheetTag("bower_components/jvectormap/jquery-jvectormap.css") %>
   <%= stylesheetTag("dist/css/AdminLTE.min.css") %>
+  <%= stylesheetTag("bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css") %>
   <%= stylesheetTag("dist/css/skins/_all-skins.min.css") %>
+  
   <%= contentOf("afterStyles"){ %>
 
   <% }%>
@@ -265,6 +267,9 @@
 <%= javascriptTag("bower_components/chart.js/Chart.js") %>
 <%= javascriptTag("dist/js/pages/dashboard2.js") %>
 <%= javascriptTag("dist/js/demo.js") %>
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<%= javascriptTag("bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js") %>
+
 <%= contentOf("afterScripts"){ %>
 
 <% }%>
@@ -280,8 +285,40 @@
                 $(this).parents('.treeview-menu').show();
             }
         });
+        // custom action routes //
+      $(document).on('click','.showData',function(){
+        var id = $(this).attr('data-id');
+        var moduleName = $(this).attr('data-modulename');
+        location.href = "/auth/"+moduleName+"/"+id;
+      });
 
+      $(document).on('click','.editData',function(){
+        var id = $(this).attr('data-id');
+        var moduleName = $(this).attr('data-modulename');
+        location.href = "/auth/"+moduleName+"/"+id+"/edit";
+      })
+      $(document).on('click','.deleteData',function(){
+        var id = $(this).attr('data-id');
+        var moduleName = $(this).attr('data-modulename');
+        var href = "/auth/"+moduleName+"/"+id;
+        var confirmation = confirm("Are you sure?");
+        if (!confirmation) {
+          return false;
+        }
+        $.ajax({
+                url : href,
+                method : 'DELETE',
+                dataType : 'json',
+                success : function(data){
+                  $("#flashMessage").html('<div class="alert alert-info">'+moduleName+' successfully deleted.</div>');
+                  setTimeout(function() {
+                    location.reload();
+                  }, 2000);
+                }
+        });
+      })
     });
+    
 </script>
 </body>
 </html>

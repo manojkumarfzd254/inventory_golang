@@ -3,6 +3,7 @@ package actions
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
@@ -30,6 +31,87 @@ type CategoriesResource struct {
 
 // List gets all Categories. This function is mapped to the path
 // GET /categories
+func (v CategoriesResource) CategoriesIndex(c buffalo.Context) error {
+	// Define DataTables request parameters
+	draw := c.Param("draw")
+	start, _ := strconv.Atoi(c.Param("start"))
+	length, _ := strconv.Atoi(c.Param("length"))
+	searchValue := c.Param("search[value]")
+	orderColumnIndex, _ := strconv.Atoi(c.Param("order[0][column]"))
+	orderColumnName := c.Param("columns[" + strconv.Itoa(orderColumnIndex) + "][data]")
+	orderDir := c.Param("order[0][dir]")
+
+	// Create a DB connection
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+
+	// Calculate pagination values
+	currentPage := (start / length) + 1
+	perPage := length
+
+	// Prepare the query
+	q := tx.Paginate(currentPage, perPage)
+	q = q.Order(orderColumnName + " " + orderDir)
+
+	// Apply search filter
+	if searchValue != "" {
+		q = q.Where("category_name LIKE ?", "%"+searchValue+"%")
+	}
+
+	// Fetch the data
+	var categories models.Categories
+	if err := q.All(&categories); err != nil {
+		return err
+	}
+
+	// Get the total count
+	count, err := tx.Count(&models.Categories{})
+	if err != nil {
+		return err
+	}
+
+	// Prepare the response
+	response := map[string]interface{}{
+		"draw":            draw,
+		"recordsTotal":    count,
+		"recordsFiltered": len(categories),
+		"data":            formatCategoriesData(categories, c),
+	}
+
+	return c.Render(200, r.JSON(response))
+}
+
+func formatCategoriesData(categories models.Categories, c buffalo.Context) []interface{} {
+	var formattedData []interface{}
+
+	for _, category := range categories {
+		// Create a new map to hold the formatted category data
+		formattedCategory := make(map[string]interface{})
+
+		// Add the existing category data
+		formattedCategory["id"] = category.ID
+		categoryID := category.ID.String()
+		formattedCategory["category_name"] = category.CategoryName
+		if category.Status == 1 {
+			formattedCategory["status"] = "<label class='label label-success'>Active</label>"
+		} else {
+			formattedCategory["status"] = "<label class='label label-danger'>De-Active</label>"
+		}
+		formattedCategory["updated_at"] = category.UpdatedAt.Format("01-02-2006 (03:04 PM)")
+		// Add the custom action column with edit and delete buttons
+		actions := "<button class='btn btn-default showData' data-id='" + categoryID + "' data-modulename='categories'><i class='fa fa-eye'></i></button> " +
+			"<button class='btn btn-default editData' data-id='" + categoryID + "' data-modulename='categories'><i class='fa fa-edit'></i></button> " +
+			"<button class='btn btn-default deleteData' data-id='" + categoryID + "' data-modulename='categories'><i class='fa fa-trash'></i></button>"
+		formattedCategory["actions"] = actions
+
+		// Add the formatted category data to the response
+		formattedData = append(formattedData, formattedCategory)
+	}
+
+	return formattedData
+}
 func (v CategoriesResource) List(c buffalo.Context) error {
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)

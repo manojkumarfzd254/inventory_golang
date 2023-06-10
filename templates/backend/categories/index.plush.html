@@ -8,45 +8,15 @@
   </div>
   <div class="box-body">
     <div class="table-responsive">
-      <table class="table table-hover table-bordered">
+      <table id="categories-table" class="table table-hover table-bordered">
         <thead class="thead-light">
           <th>Category Name</th>
           <th>Status</th>
           <th>Updated At</th>
-          <th>Action</th>
+          <th>Actions</th>
         </thead>
         <tbody>
-          <%= for (category) in categories { %>
-          <tr>
-            <td><%= category.CategoryName%></td>
-            <td>
-              <%= if(category.Status ==1){ %>
-              <span class="label label-success">Active</span>
-              <% } else {%>
-              <span class="label label-danger">De-Active</span>
-              <% }%>
-            </td>
-            <td>
-              <%= category.UpdatedAt.Month()%> <%= category.UpdatedAt.Day()%>,
-              <%= category.UpdatedAt.Year()%> (<%=
-              category.UpdatedAt.Format("03:04 PM") %>)
-            </td>
-            <td>
-              <div class="float-end">
-                <%= linkTo(authCategoryPath({ category_id: category.ID }),
-                {class: "btn btn-default", body: "<i class='fa fa-eye'></i>"})
-                %> <%= linkTo(editAuthCategoryPath({ category_id: category.ID
-                }), {class: "btn btn-default", body: "<i class='fa fa-edit'></i
-                >"}) %> <%= linkTo(authCategoryPath({ category_id: category.ID
-                }), {class: "btn btn-default", "data-method": "DELETE",
-                "data-confirm": "Are you sure?", body: "<i
-                  class='fa fa-trash'
-                ></i
-                >"}) %>
-              </div>
-            </td>
-          </tr>
-          <% } %>
+          
         </tbody>
       </table>
     </div>
@@ -55,3 +25,30 @@
     <div class="text-center"><%= paginator(pagination) %></div>
   </div>
 </div>
+<% contentFor("afterScripts") { %>
+<script>
+    $(document).ready(function () {
+        $('#categories-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '<%=authCategoriesIndexPath()%>',
+                type: 'GET',
+            },
+            // lengthMenu: [10,20,50,60],
+            columns: [
+                  
+                // {data: 'brand_image', name: 'brand_image', orderable: false, searchable: false},
+                {data: 'category_name', name: 'category_name'},
+                {data: 'status', name: 'status'},
+                {data: 'updated_at', name: 'updated_at'},
+                // {data: 'publish_status', name: 'publish_status'},
+                {data: 'actions', name: 'actions', orderable: false, searchable: false},
+            ],
+            "drawCallback": function () {
+              $('.dataTables_paginate > .pagination').addClass('pagination');
+          }
+        });
+    });
+</script>
+<%}%>

@@ -95,7 +95,7 @@ func App() *buffalo.App {
 
 		// book resource route
 		auth.Resource("/books", BooksResource{})
-
+		auth.GET("/categories/index", CategoriesResource{}.CategoriesIndex)
 		// Categories resource route
 		auth.Resource("/categories", CategoriesResource{})
 
