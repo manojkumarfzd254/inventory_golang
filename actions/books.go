@@ -3,6 +3,7 @@ package actions
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
@@ -29,6 +30,93 @@ type BooksResource struct {
 	buffalo.Resource
 }
 
+func (v BooksResource) BooksIndex(c buffalo.Context) error {
+	// Define DataTables request parameters
+	draw := c.Param("draw")
+	start, _ := strconv.Atoi(c.Param("start"))
+	length, _ := strconv.Atoi(c.Param("length"))
+	searchValue := c.Param("search[value]")
+	orderColumnIndex, _ := strconv.Atoi(c.Param("order[0][column]"))
+	orderColumnName := c.Param("columns[" + strconv.Itoa(orderColumnIndex) + "][data]")
+	orderDir := c.Param("order[0][dir]")
+
+	// Create a DB connection
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+
+	// Calculate pagination values
+	currentPage := (start / length) + 1
+	perPage := length
+
+	// Prepare the query
+	q := tx.Paginate(currentPage, perPage)
+	q = q.Join("categories", "categories.id = books.category_id").Order(orderColumnName + " " + orderDir)
+
+	// Apply search filter
+	if searchValue != "" {
+		q = q.Where("books.title LIKE ? OR books.book_no LIKE ? OR books.author LIKE ? OR books.price LIKE ? OR categories.category_name LIKE ?	", "%"+searchValue+"%", "%"+searchValue+"%", "%"+searchValue+"%", "%"+searchValue+"%", "%"+searchValue+"%")
+	}
+
+	// Fetch the data
+	var books models.Books
+	if err := q.Eager().All(&books); err != nil {
+		return err
+	}
+
+	// Get the total count
+	count, err := tx.Count(&models.Books{})
+	if err != nil {
+		return err
+	}
+
+	// Prepare the response
+	response := map[string]interface{}{
+		"draw":            draw,
+		"recordsTotal":    count,
+		"recordsFiltered": len(books),
+		"data":            formatBooksData(books),
+	}
+
+	return c.Render(200, r.JSON(response))
+}
+
+func formatBooksData(books models.Books) []interface{} {
+	var formattedData []interface{}
+
+	for _, book := range books {
+		// Create a new map to hold the formatted category data
+		formattedBook := make(map[string]interface{})
+
+		// Add the existing category data
+		formattedBook["id"] = book.ID
+		bookID := book.ID.String()
+		formattedBook["picture_path"] = "<img src='" + book.PicturePath + "' style='width: 80px; height: 100px'>"
+		formattedBook["category_name"] = book.Category.CategoryName
+		formattedBook["title"] = book.Title
+		formattedBook["book_no"] = book.BookNo
+		formattedBook["author"] = book.Author
+		formattedBook["price"] = book.Price
+		if book.Status == 1 {
+			formattedBook["status"] = "<label class='label label-success'>Active</label>"
+		} else {
+			formattedBook["status"] = "<label class='label label-danger'>De-Active</label>"
+		}
+		formattedBook["updated_at"] = book.UpdatedAt.Format("01-02-2006 (03:04 PM)")
+		// Add the custom action column with edit and delete buttons
+		actions := "<button class='btn btn-default showData' data-id='" + bookID + "' data-modulename='books'><i class='fa fa-eye'></i></button> " +
+			"<button class='btn btn-default editData' data-id='" + bookID + "' data-modulename='books'><i class='fa fa-edit'></i></button> " +
+			"<button class='btn btn-default deleteData' data-id='" + bookID + "' data-modulename='books'><i class='fa fa-trash'></i></button>"
+		formattedBook["actions"] = actions
+
+		// Add the formatted category data to the response
+		formattedData = append(formattedData, formattedBook)
+	}
+
+	return formattedData
+}
+
 // List gets all Books. This function is mapped to the path
 // GET /books
 func (v BooksResource) List(c buffalo.Context) error {
@@ -53,7 +141,6 @@ func (v BooksResource) List(c buffalo.Context) error {
 		// Add the paginator to the context so it can be used in the template.
 		c.Set("pagination", q.Paginator)
 		c.Set("PageTitle", "Books List")
-		c.Set("books", books)
 		return c.Render(http.StatusOK, r2.HTML("backend/books/index.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
 		if c.Param("q") != "" {

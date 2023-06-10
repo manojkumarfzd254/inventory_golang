@@ -8,58 +8,20 @@
   </div>
   <div class="box-body">
     <div class="table-responsive">
-      <table class="table table-hover table-bordered">
+      <table id="books-table" class="table table-hover table-bordered">
         <thead class="thead-light">
           <th>Picture</th>
-          <th>Category Name</th>
           <th>Title</th>
+          <th>Category Name</th>
+          
           <th>Book No</th>
           <th>Author</th>
           <th>Price</th>
           <th>Status</th>
           <th>Updated At</th>
-          <th>Action</th>
+          <th>Actions</th>
         </thead>
-        <tbody>
-          <%= for (book) in books { %>
-          <tr>
-            <td>
-              <img
-                src="<%= book.PicturePath%>"
-                style="width: 80px; height: 100px"
-              />
-            </td>
-            <td><%= book.Category.CategoryName%></td>
-            <td><%= book.Title%></td>
-            <td><%= book.BookNo%></td>
-            <td><%= book.Author%></td>
-            <td><%= book.Price%></td>
-            <td>
-              <%= if(book.Status ==1){ %>
-              <span class="label label-success">Active</span>
-              <% } else {%>
-              <span class="label label-danger">De-Active</span>
-              <% }%>
-            </td>
-            <td>
-              <%= book.UpdatedAt.Month()%> <%= book.UpdatedAt.Day()%>, <%=
-              book.UpdatedAt.Year()%> (<%= book.UpdatedAt.Format("03:04 PM") %>)
-            </td>
-
-            <td>
-              <div class="float-end">
-                <%= linkTo(authBookPath({ book_id: book.ID }), {class: "btn
-                btn-default", body: "<i class='fa fa-eye'></i>"}) %> <%=
-                linkTo(editAuthBookPath({ book_id: book.ID }), {class: "btn
-                btn-default", body: "<i class='fa fa-edit'></i>"}) %> <%=
-                linkTo(authBookPath({ book_id: book.ID }), {class: "btn
-                btn-default", "data-method": "DELETE", "data-confirm": "Are you
-                sure?", body: "<i class='fa fa-trash'></i>"}) %>
-              </div>
-            </td>
-          </tr>
-          <% } %>
-        </tbody>
+      
       </table>
     </div>
   </div>
@@ -67,3 +29,35 @@
     <div class="text-center"><%= paginator(pagination) %></div>
   </div>
 </div>
+
+<% contentFor("afterScripts") { %>
+<script>
+    $(document).ready(function () {
+      globalTableData = $('#books-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '<%=authBooksIndexPath()%>',
+                type: 'GET',
+            },
+            lengthMenu: [20,50,60],
+            dom: 'lfptrip',
+            columns: [
+                  
+                {data: 'picture_path', name: 'picture_path', orderable: false, searchable: false},
+                {data: 'title', name: 'title'},
+                {data: 'category_name', name: 'category_name'},
+                {data: 'book_no', name: 'book_no'},
+                {data: 'author', name: 'author'},
+                {data: 'price', name: 'price'},
+                {data: 'status', name: 'status'},
+                {data: 'updated_at', name: 'updated_at'},
+                {data: 'actions', name: 'actions', orderable: false, searchable: false},
+            ],
+            "drawCallback": function () {
+              $('.dataTables_paginate > .pagination').addClass('pagination');
+          }
+        });
+    });
+</script>
+<%}%>

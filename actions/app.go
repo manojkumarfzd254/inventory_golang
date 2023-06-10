@@ -94,9 +94,11 @@ func App() *buffalo.App {
 		user.DELETE("/delete/{ID}", UserDelete)
 
 		// book resource route
+		auth.GET("/books/index", BooksResource{}.BooksIndex)
 		auth.Resource("/books", BooksResource{})
-		auth.GET("/categories/index", CategoriesResource{}.CategoriesIndex)
+
 		// Categories resource route
+		auth.GET("/categories/index", CategoriesResource{}.CategoriesIndex)
 		auth.Resource("/categories", CategoriesResource{})
 
 		// Categories resource route
