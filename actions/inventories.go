@@ -128,7 +128,7 @@ func (v InventoriesResource) Create(c buffalo.Context) error {
 			// Render again the new.html template that the user can
 			// correct the input.
 			c.Set("inventory", inventory)
-
+			c.Set("PageTitle", "Create Inventory")
 			return c.Render(http.StatusUnprocessableEntity, r2.HTML("backend/inventories/new.plush.html"))
 		}).Wants("json", func(c buffalo.Context) error {
 			return c.Render(http.StatusUnprocessableEntity, r2.JSON(verrs))
@@ -205,7 +205,7 @@ func (v InventoriesResource) Update(c buffalo.Context) error {
 			// Render again the edit.html template that the user can
 			// correct the input.
 			c.Set("inventory", inventory)
-
+			c.Set("PageTitle", "Edit Inventory")
 			return c.Render(http.StatusUnprocessableEntity, r2.HTML("backend/inventories/edit.plush.html"))
 		}).Wants("json", func(c buffalo.Context) error {
 			return c.Render(http.StatusUnprocessableEntity, r2.JSON(verrs))

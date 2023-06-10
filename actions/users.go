@@ -106,7 +106,7 @@ func UserUpdate(c buffalo.Context) error {
 			// Render again the edit.html template that the user can
 			// correct the input.
 			c.Set("user", user)
-
+			c.Set("PageTitle", "Edit User")
 			return c.Render(http.StatusUnprocessableEntity, r2.HTML("backend/users/edit.plush.html"))
 		}).Wants("json", func(c buffalo.Context) error {
 			return c.Render(http.StatusUnprocessableEntity, r2.JSON(verrs))
@@ -175,7 +175,7 @@ func UserSave(c buffalo.Context) error {
 			// Render again the new.html template that the user can
 			// correct the input.
 			c.Set("user", user)
-
+			c.Set("PageTitle", "Create User")
 			return c.Render(http.StatusUnprocessableEntity, r2.HTML("backend/users/create.plush.html"))
 		}).Wants("json", func(c buffalo.Context) error {
 			return c.Render(http.StatusUnprocessableEntity, r2.JSON(verrs))

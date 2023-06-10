@@ -77,13 +77,13 @@ func (v CategoriesResource) CategoriesIndex(c buffalo.Context) error {
 		"draw":            draw,
 		"recordsTotal":    count,
 		"recordsFiltered": len(categories),
-		"data":            formatCategoriesData(categories, c),
+		"data":            formatCategoriesData(categories),
 	}
 
 	return c.Render(200, r.JSON(response))
 }
 
-func formatCategoriesData(categories models.Categories, c buffalo.Context) []interface{} {
+func formatCategoriesData(categories models.Categories) []interface{} {
 	var formattedData []interface{}
 
 	for _, category := range categories {
@@ -219,6 +219,7 @@ func (v CategoriesResource) Create(c buffalo.Context) error {
 
 			// Render again the new.html template that the user can
 			// correct the input.
+			c.Set("PageTitle", "Create Category")
 			c.Set("category", category)
 
 			return c.Render(http.StatusUnprocessableEntity, r2.HTML("backend/categories/new.plush.html"))
@@ -297,7 +298,7 @@ func (v CategoriesResource) Update(c buffalo.Context) error {
 			// Render again the edit.html template that the user can
 			// correct the input.
 			c.Set("category", category)
-
+			c.Set("PageTitle", "Edit Category")
 			return c.Render(http.StatusUnprocessableEntity, r2.HTML("backend/categories/edit.plush.html"))
 		}).Wants("json", func(c buffalo.Context) error {
 			return c.Render(http.StatusUnprocessableEntity, r2.JSON(verrs))

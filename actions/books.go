@@ -161,7 +161,7 @@ func (v BooksResource) Create(c buffalo.Context) error {
 			// correct the input.
 			c.Set("book", book)
 			c.Set("categories", categories)
-
+			c.Set("PageTitle", "Create Category")
 			return c.Render(http.StatusUnprocessableEntity, r2.HTML("backend/books/new.plush.html"))
 		}).Wants("json", func(c buffalo.Context) error {
 			return c.Render(http.StatusUnprocessableEntity, r2.JSON(verrs))
@@ -247,7 +247,7 @@ func (v BooksResource) Update(c buffalo.Context) error {
 			// correct the input.
 			c.Set("book", book)
 			c.Set("categories", categories)
-
+			c.Set("PageTitle", "Edit Category")
 			return c.Render(http.StatusUnprocessableEntity, r2.HTML("backend/books/edit.plush.html"))
 		}).Wants("json", func(c buffalo.Context) error {
 			return c.Render(http.StatusUnprocessableEntity, r2.JSON(verrs))
