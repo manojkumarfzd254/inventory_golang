@@ -3,6 +3,7 @@ package actions
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
@@ -26,6 +27,85 @@ import (
 // InventoriesResource is the resource for the Inventory model
 type InventoriesResource struct {
 	buffalo.Resource
+}
+
+func (v InventoriesResource) InventoriesIndex(c buffalo.Context) error {
+	// Define DataTables request parameters
+	draw := c.Param("draw")
+	start, _ := strconv.Atoi(c.Param("start"))
+	length, _ := strconv.Atoi(c.Param("length"))
+	searchValue := c.Param("search[value]")
+	orderColumnIndex, _ := strconv.Atoi(c.Param("order[0][column]"))
+	orderColumnName := c.Param("columns[" + strconv.Itoa(orderColumnIndex) + "][data]")
+	orderDir := c.Param("order[0][dir]")
+
+	// Create a DB connection
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+
+	// Calculate pagination values
+	currentPage := (start / length) + 1
+	perPage := length
+
+	// Prepare the query
+	q := tx.Paginate(currentPage, perPage)
+	q = q.Join("books", "books.id = inventories.book_id").Order(orderColumnName + " " + orderDir)
+
+	// Apply search filter
+	if searchValue != "" {
+		q = q.Where("books.title LIKE ? OR inventories.qty LIKE ? ", "%"+searchValue+"%", "%"+searchValue+"%")
+	}
+
+	// Fetch the data
+	var inventories models.Inventories
+	if err := q.Eager().All(&inventories); err != nil {
+		return err
+	}
+
+	// Get the total count
+	count, err := tx.Count(&models.Inventories{})
+	if err != nil {
+		return err
+	}
+
+	// Prepare the response
+	response := map[string]interface{}{
+		"draw":            draw,
+		"recordsTotal":    count,
+		"recordsFiltered": len(inventories),
+		"data":            formatInventoriesData(inventories),
+	}
+
+	return c.Render(200, r.JSON(response))
+}
+
+func formatInventoriesData(inventories models.Inventories) []interface{} {
+	var formattedData []interface{}
+
+	for _, inventory := range inventories {
+		// Create a new map to hold the formatted category data
+		formattedInventory := make(map[string]interface{})
+
+		// Add the existing category data
+		formattedInventory["id"] = inventory.ID
+		inventoryID := inventory.ID.String()
+		formattedInventory["title"] = inventory.Book.Title
+		formattedInventory["qty"] = inventory.Qty
+
+		formattedInventory["updated_at"] = inventory.UpdatedAt.Format("01-02-2006 (03:04 PM)")
+		// Add the custom action column with edit and delete buttons
+		actions := "<button class='btn btn-default showData' data-id='" + inventoryID + "' data-modulename='inventories'><i class='fa fa-eye'></i></button> " +
+			"<button class='btn btn-default editData' data-id='" + inventoryID + "' data-modulename='inventories'><i class='fa fa-edit'></i></button> " +
+			"<button class='btn btn-default deleteData' data-id='" + inventoryID + "' data-modulename='inventories'><i class='fa fa-trash'></i></button>"
+		formattedInventory["actions"] = actions
+
+		// Add the formatted category data to the response
+		formattedData = append(formattedData, formattedInventory)
+	}
+
+	return formattedData
 }
 
 // List gets all Inventories. This function is mapped to the path

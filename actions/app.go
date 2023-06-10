@@ -102,6 +102,7 @@ func App() *buffalo.App {
 		auth.Resource("/categories", CategoriesResource{})
 
 		// Categories resource route
+		auth.GET("/inventories/index", InventoriesResource{}.InventoriesIndex)
 		auth.Resource("/inventories", InventoriesResource{})
 
 		//Routes for User registration
