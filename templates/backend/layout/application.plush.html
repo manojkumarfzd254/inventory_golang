@@ -23,7 +23,9 @@
     %> <%= stylesheetTag("dist/css/skins/_all-skins.min.css") %>
    
     <%= contentOf("afterStyles"){ %> <% }%>
-
+    <script>
+      var globalTableData = 0;
+    </script>
     <!-- Google Font -->
     <link
       rel="stylesheet"
@@ -323,43 +325,72 @@
           var id = $(this).attr("data-id");
           var moduleName = $(this).attr("data-modulename");
           var href = "/auth/" + moduleName + "/" + id;
-          var confirmation = confirm("Are you sure?");
-          if (!confirmation) {
-            return false;
-          }
-          $.ajax({
-            url: href,
-            method: "DELETE",
-            dataType: "json",
-            beforeSend : function(){
-              $(".overlay").show();
-            },
-            success: function (data) {
-              if (data.category_name) {
-                $.alert({
-                  title: "Action",
-                  icon: "fa fa-trash-o",
-                  theme: "bootstrap",
-                  type: "blue",
-                  content:
-                    data.category_name +
-                    " " +
-                    moduleName +
-                    " was successfully Deleted.",
-                  buttons: {
+
+          $.confirm({
+                title : "Confirmation",
+                type : "orange",
+                theme : "bootstrap",
+                icon : "fa fa-warning",
+                content : "Are you sure you want to remove this "+moduleName+" ?",
+                buttons: {
                     info: {
-                      action: function () {
-                        location.reload();
-                      },
+                        btnClass: 'btn btn-primary fa fa-check-circle',
+                        text : " Confirm",
+                        action: function(){
+                            $.ajaxSetup({
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                }
+                            });
+                            $.ajax({
+                                url : href,
+                                type : "DELETE",
+                                dataType : "json",
+                                beforeSend : function(){
+                                  $(".overlay").show();
+                                },
+                                success : function(data){
+                                      if (data.category_name) {
+                                        $.alert({
+                                          title: "Action",
+                                          icon: "fa fa-trash-o",
+                                          theme: "bootstrap",
+                                          type: "blue",
+                                          content:
+                                            data.category_name +
+                                            " " +
+                                            moduleName +
+                                            " was successfully Deleted.",
+                                          buttons: {
+                                            ok: {
+                                              action: function () {
+                                                globalTableData.ajax.reload();
+                                              },
+                                            },
+                                          },
+                                        });
+                                      
+                                    }
+                                },
+                                complete : function(){
+                                  $(".overlay").hide();
+                                },
+                                error : function(a,b,c){
+                                    console.log(a.responseText);
+                                }
+                            });
+                        }
                     },
-                  },
-                });
-              }
-            },
-            complete : function(){
-              $(".overlay").hide();
-            },
-          });
+                    danger: {
+                        btnClass: 'btn btn-danger fa fa-times-circle',
+                        text : " Cancel",
+                        action : function(){
+                            this.close();
+                        }
+
+                    }
+                }
+    });  
         });
       });
     </script>

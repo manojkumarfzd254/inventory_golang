@@ -31,7 +31,7 @@
 <% contentFor("afterScripts") { %>
 <script>
     $(document).ready(function () {
-        $('#categories-table').DataTable({
+      globalTableData = $('#categories-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
