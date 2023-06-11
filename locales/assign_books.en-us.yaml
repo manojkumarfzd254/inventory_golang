@@ -1,0 +1,6 @@
+- id: "assign_book.created.success"
+  translation: "AssignBook was successfully created."
+- id: "assign_book.updated.success"
+  translation: "AssignBook was successfully updated."
+- id: "assign_book.destroyed.success"
+  translation: "AssignBook was successfully destroyed."

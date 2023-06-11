@@ -1,0 +1,8 @@
+<div class="py-4 mb-2">
+  <h3 class="d-inline-block">New AssignBook</h3>
+</div>
+
+<%= formFor(assignBook, {action: assignBooksPath(), method: "POST"}) { %>
+  <%= partial("assign_books/form.html") %>
+  <%= linkTo(assignBooksPath(), {class: "btn btn-warning", "data-confirm": "Are you sure?", body: "Cancel"}) %>
+<% } %>

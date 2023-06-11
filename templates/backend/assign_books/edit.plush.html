@@ -1,0 +1,8 @@
+<div class="py-4 mb-2">
+  <h3 class="d-inline-block">Edit AssignBook</h3>
+</div>
+
+<%= formFor(assignBook, {action: assignBookPath({ assign_book_id: assignBook.ID }), method: "PUT"}) { %>
+  <%= partial("assign_books/form.html") %>
+  <%= linkTo(assignBookPath({ assign_book_id: assignBook.ID }), {class: "btn btn-warning", "data-confirm": "Are you sure?", body: "Cancel"}) %>
+<% } %>

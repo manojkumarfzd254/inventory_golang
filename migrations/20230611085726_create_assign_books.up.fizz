@@ -1,0 +1,19 @@
+create_table("assign_books") {
+	t.Column("id", "uuid", {primary: true})
+	t.Column("customer_id", "string", {})
+	t.Column("book_id", "string", {})
+	t.Column("assign_date", "date", {})
+	t.Timestamps()
+}
+
+add_foreign_key("assign_books", "book_id", {"books": ["id"]}, {
+    "name": "assign_books_book_id",
+    "on_delete": "cascade",
+    "on_update": "cascade",
+})
+
+add_foreign_key("assign_books", "customer_id", {"customers": ["id"]}, {
+    "name": "assign_books_customer_id",
+    "on_delete": "cascade",
+    "on_update": "cascade",
+})
