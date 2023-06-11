@@ -1,0 +1,8 @@
+create_table("customers") {
+	t.Column("id", "uuid", {primary: true})
+	t.Column("name", "string", {})
+	t.Column("email", "string", {})
+	t.Column("mobile", "string", {})
+	t.Column("address", "text", {null: true})
+	t.Timestamps()
+}
