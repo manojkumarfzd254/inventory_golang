@@ -1,45 +1,37 @@
-<div class="py-4 mb-2">
-  <h3 class="d-inline-block">Customer Details</h3>
+<div class="box box-info">
+  <div class="box-header">
+    <h3 class="d-inline-block">Customer Details</h3>
 
-  <div class="float-end">
-    <%= linkTo(customersPath(), {class: "btn btn-info"}) { %>
-      Back to all Customers
-    <% } %>
-    <%= linkTo(editCustomerPath({ customer_id: customer.ID }), {class: "btn btn-warning", body: "Edit"}) %>
-    <%= linkTo(customerPath({ customer_id: customer.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+    <div class="pull-right">
+      <%= linkTo(authCustomersPath(), {class: "btn btn-info"}) { %> Back to all
+      Customers <% } %> <%= linkTo(editAuthCustomerPath({ customer_id:
+      customer.ID }), {class: "btn btn-warning", body: "Edit"}) %> <%=
+      linkTo(authCustomerPath({ customer_id: customer.ID }), {class: "btn
+      btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?",
+      body: "Destroy"}) %>
+    </div>
+  </div>
+  <div class="box-body">
+    <ul class="list-group mb-2">
+      <li class="list-group-item pb-1">
+        <label class="small d-block">Name</label>
+        <p class="d-inline-block"><%= customer.Name %></p>
+      </li>
+
+      <li class="list-group-item pb-1">
+        <label class="small d-block">Email</label>
+        <p class="d-inline-block"><%= customer.Email %></p>
+      </li>
+
+      <li class="list-group-item pb-1">
+        <label class="small d-block">Mobile</label>
+        <p class="d-inline-block"><%= customer.Mobile %></p>
+      </li>
+
+      <li class="list-group-item pb-1">
+        <label class="small d-block">Address</label>
+        <p class="d-inline-block"><%= customer.Address %></p>
+      </li>
+    </ul>
   </div>
 </div>
-
-
-
-<ul class="list-group mb-2 ">
-
-
-  <li class="list-group-item pb-1">
-    <label class="small d-block">Name</label>
-    <p class="d-inline-block"><%= customer.Name %></p>
-  </li>
-
-
-
-  <li class="list-group-item pb-1">
-    <label class="small d-block">Email</label>
-    <p class="d-inline-block"><%= customer.Email %></p>
-  </li>
-
-
-
-  <li class="list-group-item pb-1">
-    <label class="small d-block">Mobile</label>
-    <p class="d-inline-block"><%= customer.Mobile %></p>
-  </li>
-
-
-
-  <li class="list-group-item pb-1">
-    <label class="small d-block">Address</label>
-    <p class="d-inline-block"><%= customer.Address %></p>
-  </li>
-
-
-</ul>

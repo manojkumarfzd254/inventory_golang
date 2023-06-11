@@ -1,8 +1,10 @@
-<div class="py-4 mb-2">
-  <h3 class="d-inline-block">New Customer</h3>
+<div class="box box-primary">
+  <div class="box-header">
+    <h3 class="d-inline-block">New Customer</h3>
+  </div>
+  <div class="box-body">
+  <%= formFor(customer, {action: authCustomersPath(), method: "POST"}) { %>
+    <%= partial("backend/customers/form.html") %>
+  <% } %>
+  </div>
 </div>
-
-<%= formFor(customer, {action: customersPath(), method: "POST"}) { %>
-  <%= partial("backend/customers/form.html") %>
-  <%= linkTo(customersPath(), {class: "btn btn-warning", "data-confirm": "Are you sure?", body: "Cancel"}) %>
-<% } %>
