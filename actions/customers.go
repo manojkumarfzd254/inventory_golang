@@ -3,6 +3,7 @@ package actions
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
@@ -26,6 +27,87 @@ import (
 // CustomersResource is the resource for the Customer model
 type CustomersResource struct {
 	buffalo.Resource
+}
+
+func (v CustomersResource) CustomersIndex(c buffalo.Context) error {
+	// Define DataTables request parameters
+	draw := c.Param("draw")
+	start, _ := strconv.Atoi(c.Param("start"))
+	length, _ := strconv.Atoi(c.Param("length"))
+	searchValue := c.Param("search[value]")
+	orderColumnIndex, _ := strconv.Atoi(c.Param("order[0][column]"))
+	orderColumnName := c.Param("columns[" + strconv.Itoa(orderColumnIndex) + "][data]")
+	orderDir := c.Param("order[0][dir]")
+
+	// Create a DB connection
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+
+	// Calculate pagination values
+	currentPage := (start / length) + 1
+	perPage := length
+
+	// Prepare the query
+	q := tx.Paginate(currentPage, perPage)
+	q = q.Order(orderColumnName + " " + orderDir)
+
+	// Apply search filter
+	if searchValue != "" {
+		q = q.Where("name LIKE ? OR email LIKE ? OR mobile LIKE ? OR address LIKE ?", "%"+searchValue+"%", "%"+searchValue+"%", "%"+searchValue+"%", "%"+searchValue+"%")
+	}
+
+	// Fetch the data
+	var customers models.Customers
+	if err := q.All(&customers); err != nil {
+		return err
+	}
+
+	// Get the total count
+	count, err := tx.Count(&models.Customers{})
+	if err != nil {
+		return err
+	}
+
+	// Prepare the response
+	response := map[string]interface{}{
+		"draw":            draw,
+		"recordsTotal":    count,
+		"recordsFiltered": len(customers),
+		"data":            formatCustomersData(customers),
+	}
+
+	return c.Render(200, r.JSON(response))
+}
+
+func formatCustomersData(customers models.Customers) []interface{} {
+	var formattedData []interface{}
+
+	for _, customer := range customers {
+		// Create a new map to hold the formatted category data
+		formattedCustomer := make(map[string]interface{})
+
+		// Add the existing category data
+		formattedCustomer["id"] = customer.ID
+		customerID := customer.ID.String()
+		formattedCustomer["name"] = customer.Name
+		formattedCustomer["email"] = customer.Email
+		formattedCustomer["mobile"] = customer.Mobile
+		formattedCustomer["address"] = customer.Address
+
+		formattedCustomer["updated_at"] = customer.UpdatedAt.Format("01-02-2006 (03:04 PM)")
+		// Add the custom action column with edit and delete buttons
+		actions := "<button class='btn btn-default showData' data-id='" + customerID + "' data-modulename='customers'><i class='fa fa-eye'></i></button> " +
+			"<button class='btn btn-default editData' data-id='" + customerID + "' data-modulename='customers'><i class='fa fa-edit'></i></button> " +
+			"<button class='btn btn-default deleteData' data-id='" + customerID + "' data-modulename='customers'><i class='fa fa-trash'></i></button>"
+		formattedCustomer["actions"] = actions
+
+		// Add the formatted category data to the response
+		formattedData = append(formattedData, formattedCustomer)
+	}
+
+	return formattedData
 }
 
 // List gets all Customers. This function is mapped to the path

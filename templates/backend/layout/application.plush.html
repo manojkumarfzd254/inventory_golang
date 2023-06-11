@@ -21,7 +21,15 @@
     stylesheetTag("dist/css/AdminLTE.min.css") %> <%=
     stylesheetTag("bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css")
     %> <%= stylesheetTag("dist/css/skins/_all-skins.min.css") %>
-   
+    <style>
+    .dataTables_processing {
+        background: url('<%=assetPath("Loader.gif")%>') no-repeat center center;
+        height: 50px;
+        height: 124px;
+        box-shadow: 0px 0px 18px 0px #cccccc;
+        color: white;
+    }
+</style>
     <%= contentOf("afterStyles"){ %> <% }%>
     <script>
       var globalTableData = 0;
