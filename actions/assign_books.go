@@ -97,6 +97,56 @@ func (v AssignBooksResource) New(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r2.HTML("backend/assign_books/new.plush.html"))
 }
 
+func (v AssignBooksResource) GetBooksData(c buffalo.Context) error {
+	tx, ok := c.Value("tx").(*pop.Connection)
+
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+	books := &models.Books{}
+
+	if c.Param("q") != "" {
+		searchValue := c.Param("q")
+		if err := tx.
+			RawQuery("SELECT title, book_no, id FROM books WHERE title LIKE ? OR book_no LIKE ?", "%"+searchValue+"%", "%"+searchValue+"%").
+			All(books); err != nil {
+			return err
+		}
+	} else {
+		if err := tx.All(books); err != nil {
+			return err
+		}
+	}
+	return responder.Wants("json", func(c buffalo.Context) error {
+		return c.Render(200, r2.JSON(books))
+	}).Respond(c)
+}
+
+func (v AssignBooksResource) GetCustomersData(c buffalo.Context) error {
+	tx, ok := c.Value("tx").(*pop.Connection)
+
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+	customers := &models.Customers{}
+
+	if c.Param("q") != "" {
+		searchValue := c.Param("q")
+		if err := tx.Select("name, email, id").
+			RawQuery("SELECT name, email, id FROM customers WHERE name LIKE ? OR email LIKE ?", "%"+searchValue+"%", "%"+searchValue+"%").
+			All(customers); err != nil {
+			return err
+		}
+	} else {
+		if err := tx.Select("name, email, id").All(customers); err != nil {
+			return err
+		}
+	}
+	return responder.Wants("json", func(c buffalo.Context) error {
+		return c.Render(200, r2.JSON(customers))
+	}).Respond(c)
+}
+
 // Create adds a AssignBook to the DB. This function is mapped to the
 // path POST /assign_books
 func (v AssignBooksResource) Create(c buffalo.Context) error {

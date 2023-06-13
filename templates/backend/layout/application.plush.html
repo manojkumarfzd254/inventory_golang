@@ -16,11 +16,17 @@
     <%= stylesheetTag("bower_components/bootstrap/dist/css/bootstrap.min.css")
     %> <%=
     stylesheetTag("bower_components/font-awesome/css/font-awesome.min.css") %>
-    <%= stylesheetTag("bower_components/Ionicons/css/ionicons.min.css") %> <%=
+    <%= stylesheetTag("bower_components/Ionicons/css/ionicons.min.css") %>
+    <%= stylesheetTag("plugins/iCheck/all.css") %>
+    <%= stylesheetTag("bower_components/select2/dist/css/select2.min.css") %> <%=
     stylesheetTag("bower_components/jvectormap/jquery-jvectormap.css") %> <%=
     stylesheetTag("dist/css/AdminLTE.min.css") %> <%=
     stylesheetTag("bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css")
     %> <%= stylesheetTag("dist/css/skins/_all-skins.min.css") %>
+   
+    
+    
+    
     <style>
     .dataTables_processing {
         background: url('<%=assetPath("Loader.gif")%>') no-repeat center center;
@@ -294,15 +300,21 @@
     <%= javascriptTag("plugins/jvectormap/jquery-jvectormap-1.2.2.min.js") %>
     <%= javascriptTag("plugins/jvectormap/jquery-jvectormap-world-mill-en.js")%> 
     <%=javascriptTag("bower_components/jquery-slimscroll/jquery.slimscroll.min.js")%> 
-    <%= javascriptTag("bower_components/chart.js/Chart.js") %> <%=javascriptTag("dist/js/pages/dashboard2.js") %> 
+    <!-- <%= javascriptTag("bower_components/chart.js/Chart.js") %>
+     <%=javascriptTag("dist/js/pages/dashboard2.js") %>  -->
     <%=javascriptTag("dist/js/demo.js") %>
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css"
     />
+    <%=javascriptTag("bower_components/moment/min/moment.min.js")%> 
+    <%=javascriptTag("plugins/iCheck/icheck.min.js")%> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
     <%=javascriptTag("bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js")%> 
+    <%=javascriptTag("bower_components/select2/dist/js/select2.full.min.js")%> 
+    
+    
     <%= contentOf("afterScripts"){ %> 
       
     <% }%>

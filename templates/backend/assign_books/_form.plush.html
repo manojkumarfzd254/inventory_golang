@@ -1,1 +1,13 @@
-<button class="btn btn-success" role="submit">Save</button>
+<div class="form-group col-md-6">
+<%= f.SelectTag("BookID[]", {class:"form-control books-select2",multiple: true, value: assignBook.BookID,"allow_blank":true}) %>
+</div>
+
+<div class="form-group col-md-6">
+<%= f.SelectTag("CustomerID", {class:"form-control customers-select2",options: [], value: assignBook.CustomerID,"allow_blank":true}) %>
+</div>
+
+
+<div class="form-group col-md-12">
+    <button class="btn btn-success" role="submit">Save</button>
+    <%= linkTo(authAssignBooksPath(), {class: "btn btn-warning", "data-confirm": "Are you sure?", body: "Cancel"}) %>
+</div>

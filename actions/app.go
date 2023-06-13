@@ -108,6 +108,13 @@ func App() *buffalo.App {
 		auth.GET("/customers/index", CustomersResource{}.CustomersIndex)
 		auth.Resource("/customers", CustomersResource{})
 
+		// Assign Books resource route
+		// auth.GET("/customers/index", CustomersResource{}.CustomersIndex)
+		auth.GET("/assign_books/getBooks", AssignBooksResource{}.GetBooksData)
+		auth.GET("/assign_books/getCustomers", AssignBooksResource{}.GetCustomersData)
+
+		auth.Resource("/assign_books", AssignBooksResource{})
+
 		//Routes for User registration
 		users := app.Group("/users")
 		users.GET("/new", UsersNew)

@@ -3,6 +3,7 @@ create_table("assign_books") {
 	t.Column("customer_id", "string", {})
 	t.Column("book_id", "string", {})
 	t.Column("assign_date", "date", {})
+    t.Column("return_date", "date", {})
 	t.Timestamps()
 }
 

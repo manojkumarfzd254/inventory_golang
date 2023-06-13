@@ -16,6 +16,7 @@ type AssignBook struct {
 	CustomerID string    `json:"customer_id" db:"customer_id"`
 	BookID     string    `json:"book_id" db:"book_id"`
 	AssignDate string    `json:"assign_date" db:"assign_date"`
+	ReturnDate string    `json:"return_date" db:"return_date"`
 	CreatedAt  time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at" db:"updated_at"`
 }
@@ -42,6 +43,7 @@ func (a *AssignBook) Validate(tx *pop.Connection) (*validate.Errors, error) {
 		&validators.StringIsPresent{Field: a.CustomerID, Name: "CustomerID"},
 		&validators.StringIsPresent{Field: a.BookID, Name: "BookID"},
 		&validators.StringIsPresent{Field: a.AssignDate, Name: "AssignDate"},
+		&validators.StringIsPresent{Field: a.ReturnDate, Name: "ReturnDate"},
 	), nil
 }
 
