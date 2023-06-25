@@ -66,9 +66,16 @@
       },
     });
     jQuery(".books-select2").change(function(){
-      console.log($(this).val());
-      
+      var bookIds = $(this).val()
+      for (var i = 0; i < bookIds.length; i++) {
+          callAjax(bookIds[i])
+      }
     })
   });
+
+  function callAjax(bookID)
+  {
+    
+  }
 </script>
 <% } %>

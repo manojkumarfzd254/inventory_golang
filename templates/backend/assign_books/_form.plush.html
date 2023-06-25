@@ -3,9 +3,11 @@
 </div>
 
 <div class="form-group col-md-6">
-<%= f.SelectTag("CustomerID", {class:"form-control customers-select2",options: [], value: assignBook.CustomerID,"allow_blank":true}) %>
+<%= f.SelectTag("CustomerID", {class:"form-control customers-select2", value: assignBook.CustomerID,"allow_blank":true}) %>
 </div>
+<div class="form-group col-md-12" id="bookData">
 
+</div>
 
 <div class="form-group col-md-12">
     <button class="btn btn-success" role="submit">Save</button>
